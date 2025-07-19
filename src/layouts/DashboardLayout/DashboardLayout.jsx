@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, Outlet } from 'react-router';
-import { FileText, Home, PlusCircle, User } from 'lucide-react';
+import { FileText, Home, PlusCircle, Tag, User } from 'lucide-react';
 
 const DeshBoardLayout = () => {
     return (
@@ -66,7 +66,14 @@ const DeshBoardLayout = () => {
                             <FileText size={18} /> My Posts
                         </NavLink>
                     </li>
-
+                    <li>
+                        <NavLink
+                            to="/dashboard/add-tags"
+                            className="flex items-center gap-2"
+                        >
+                            <Tag size={18} /> Add Tags
+                        </NavLink>
+                    </li>
                 </ul>
             </div>
         </div>

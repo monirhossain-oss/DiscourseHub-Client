@@ -8,6 +8,7 @@ import Register from "../pages/Register/Register";
 import Homes from "../pages/Home/Banner";
 import DeshBoardLayout from "../layouts/DashboardLayout/DashboardLayout";
 import MyProfile from "../pages/Dashboard/MyProfile/MyProfile";
+import AddPost from "../pages/Dashboard/AddPost/AddPost";
 
 export const router = createBrowserRouter([
     {
@@ -50,7 +51,11 @@ export const router = createBrowserRouter([
                 path:'my-profile',
                 Component: MyProfile
             },
-            
+            {
+                path:'add-post',
+                Component: AddPost
+            }
+
         ]
     }
 ]);
