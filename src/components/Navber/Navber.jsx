@@ -3,6 +3,7 @@ import { useState } from "react";
 import { FiMenu, FiX, FiBell } from "react-icons/fi";
 import useAuth from "../../hooks/useAuth";
 import Swal from "sweetalert2";
+import logo from '../../assets/logo.png';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -38,13 +39,16 @@ const Navbar = () => {
     );
 
     return (
-        <nav className="bg-base-100 shadow sticky top-0 z-50">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <nav className="bg-green-300 shadow sticky top-0 z-50">
+            <div className="max-w-7xl px-2 md:px-4 lg:px-6 mx-auto ">
                 <div className="flex justify-between h-16 items-center">
                     {/* Logo and site name */}
                     <Link to="/" className="flex items-center gap-2 font-bold text-xl">
-                        <img src="/logo.png" alt="Logo" className="w-10 h-10" />
-                        DiscourseHub
+                        <img src={logo} alt="Logo" className="w-10 rounded-full h-10" />
+                        <span className="bg-gradient-to-r hidden md:block from-purple-500 to-pink-500 bg-clip-text text-transparent font-bold">
+                            DiscourseHub
+                        </span>
+
                     </Link>
 
                     {/* Desktop Links */}
@@ -65,7 +69,7 @@ const Navbar = () => {
                                 />
                                 {dropdownOpen && (
                                     <div className="absolute right-0 mt-2 w-48 bg-base-100 rounded shadow-lg py-2 z-50">
-                                        <p className="px-4 py-2 text-sm font-semibold">{user.displayName || "User"}</p>
+                                        <p className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent text-sm font-semibold">{user.displayName || "User"}</p>
                                         <Link
                                             to="/dashboard"
                                             className="block px-4 py-2 text-sm hover:bg-base-200"

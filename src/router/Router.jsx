@@ -1,11 +1,13 @@
 import { createBrowserRouter, } from "react-router";
 import MainLayouts from "../layouts/MainLayouts/MainLayouts";
-import Home from "../pages/Home/Home";
 import JoinUs from "../pages/JoinUs/JoinUs";
 import Membership from "../pages/Membership/Membership";
 import AuthLayout from "../layouts/AuthLayout/AuthLayout";
 import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
+import Homes from "../pages/Home/Banner";
+import DeshBoardLayout from "../layouts/DashboardLayout/DashboardLayout";
+import MyProfile from "../pages/Dashboard/MyProfile/MyProfile";
 
 export const router = createBrowserRouter([
     {
@@ -14,7 +16,7 @@ export const router = createBrowserRouter([
         children: [
             {
                 index: true,
-                Component: Home
+                Component: Homes
             },
             {
                 path: 'joinUs',
@@ -40,4 +42,15 @@ export const router = createBrowserRouter([
             }
         ]
     },
+    {
+        path:'dashboard',
+        Component: DeshBoardLayout,
+        children: [
+            {
+                path:'my-profile',
+                Component: MyProfile
+            },
+            
+        ]
+    }
 ]);
