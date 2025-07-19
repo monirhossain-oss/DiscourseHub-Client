@@ -2,11 +2,11 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import useAuth from '../../../hooks/useAuth';
 import useAxiosSecure from '../../../hooks/useAxiosSecure';
+
 const MyProfile = () => {
     const { user } = useAuth();
     const axiosSecure = useAxiosSecure();
 
-    // 🔹 Fetch user info from DB
     const { data: userInfo = {}, isLoading: userLoading } = useQuery({
         queryKey: ['userInfo', user?.email],
         queryFn: async () => {
@@ -16,12 +16,11 @@ const MyProfile = () => {
         enabled: !!user?.email
     });
 
-    // 🔹 Fetch last 3 posts
     const { data: recentPosts = [], isLoading: postsLoading } = useQuery({
         queryKey: ['recentPosts', user?.email],
         queryFn: async () => {
             const res = await axiosSecure.get(`/posts?email=${user?.email}&limit=3`);
-            return res.data.posts;
+            return res.data;
         },
         enabled: !!user?.email
     });
@@ -31,7 +30,7 @@ const MyProfile = () => {
     }
 
     return (
-        <div className="max-w-7xl mx-auto p-4">
+        <div className="p-4">
 
             {/* Profile Card */}
             <div className="bg-white p-6 rounded shadow mb-6 max-w-sm mx-auto">
@@ -62,7 +61,7 @@ const MyProfile = () => {
                                 <p className="text-gray-500 text-sm mb-2">
                                     {new Date(post.createdAt).toLocaleString()}
                                 </p>
-                                <p className="text-gray-700 text-sm mb-2">{post.description.slice(0, 80)}...</p>
+                                <p className="text-gray-700 text-sm mb-2">{post.description?.slice(0, 80)}...</p>
                                 <div className="mt-2 flex flex-wrap gap-1">
                                     {post.tags?.map(tag => (
                                         <span key={tag} className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
@@ -76,7 +75,6 @@ const MyProfile = () => {
                 )}
             </div>
         </div>
-
     );
 };
 

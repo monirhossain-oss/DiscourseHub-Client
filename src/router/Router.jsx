@@ -9,6 +9,7 @@ import Homes from "../pages/Home/Banner";
 import DeshBoardLayout from "../layouts/DashboardLayout/DashboardLayout";
 import MyProfile from "../pages/Dashboard/MyProfile/MyProfile";
 import AddPost from "../pages/Dashboard/AddPost/AddPost";
+import AddTag from "../pages/Dashboard/Admin/AddTag";
 
 export const router = createBrowserRouter([
     {
@@ -54,6 +55,10 @@ export const router = createBrowserRouter([
             {
                 path:'add-post',
                 Component: AddPost
+            },
+            {
+                path: 'add-tags',
+                Component: AddTag
             }
 
         ]

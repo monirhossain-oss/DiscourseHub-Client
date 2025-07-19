@@ -29,7 +29,7 @@ const AddTag = () => {
     };
 
     return (
-        <div className="max-w-md mx-auto p-4">
+        <div className=" p-4">
             <h2 className="text-2xl font-bold mb-4">Add New Tag</h2>
             <form onSubmit={handleAddTag} className="space-y-3 bg-white p-4 rounded shadow">
                 <input

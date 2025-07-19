@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import useAuth from '../../../hooks/useAuth';
 import useAxiosSecure from '../../../hooks/useAxiosSecure';
 import { useForm } from 'react-hook-form';
@@ -8,19 +8,18 @@ import Swal from 'sweetalert2';
 const AddPost = () => {
     const { user } = useAuth();
     const axiosSecure = useAxiosSecure();
-    const [postCount, setPostCount] = useState(0);
 
-    // Fetch user's post count
-    const { isLoading: loadingPostCount } = useQuery({
+    const { data: postCountData = { count: 0 }, isLoading: loadingPostCount } = useQuery({
         queryKey: ['userPostCount', user?.email],
         queryFn: async () => {
-            const res = await axiosSecure.get(`/posts?email=${user?.email}`);
-            setPostCount(res.data.total || res.data.length);
+            const res = await axiosSecure.get(`/posts/count/${user?.email}`);
+            return res.data;
         },
         enabled: !!user?.email
     });
 
-    // Fetch tags from DB
+    const postCount = postCountData.count;
+
     const { data: tags = [], isLoading: loadingTags } = useQuery({
         queryKey: ['tags'],
         queryFn: async () => {
@@ -68,14 +67,18 @@ const AddPost = () => {
         return <p className="text-center py-8">Loading...</p>;
     }
 
+    const isLimitReached = !user.isMember && postCount >= 5;
+
     return (
         <div className="p-4">
-            <div className="bg-white p-6 rounded shadow">
+            <div className="bg-white p-6 rounded shadow max-w-3xl mx-auto">
                 <h2 className="text-2xl font-bold mb-4 text-center">Add New Post</h2>
 
-                {postCount >= 5 ? (
+                {isLimitReached ? (
                     <div className="text-center">
-                        <p className="text-red-600 font-semibold mb-4">You have reached the limit of 5 posts.</p>
+                        <p className="text-red-600 font-semibold mb-4">
+                            You have reached the limit of 5 posts.
+                        </p>
                         <button className="btn btn-warning">Become a Member</button>
                     </div>
                 ) : (
@@ -127,7 +130,7 @@ const AddPost = () => {
                             {errors.description && <span className="text-red-500 text-sm">{errors.description.message}</span>}
                         </div>
 
-                        {/* Tag */}
+                        {/* Tag Dropdown */}
                         <div>
                             <label className="block text-sm mb-1">Select Tag</label>
                             <select {...register('tag', { required: 'Please select a tag' })} className="select select-bordered w-full">
