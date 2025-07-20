@@ -1,14 +1,12 @@
-import React, { useState } from 'react';
-import Banner from './Banner';
-import SearchResults from './SearchResults';
+import AnnouncementSection from "./AnnouncementSection";
+import Banner from "./Banner";
 
 const Home = () => {
-    const [searchResults, setSearchResults] = useState([]);
 
     return (
         <div className="home-page">
-             <Banner onSearchResults={setSearchResults} />
-            {searchResults.length > 0 && <SearchResults posts={searchResults} />}
+            <Banner></Banner>
+            <AnnouncementSection></AnnouncementSection>
         </div>
     );
 };

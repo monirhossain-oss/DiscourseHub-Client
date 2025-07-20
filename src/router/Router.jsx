@@ -5,13 +5,13 @@ import Membership from "../pages/Membership/Membership";
 import AuthLayout from "../layouts/AuthLayout/AuthLayout";
 import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
-import Homes from "../pages/Home/Banner";
 import DeshBoardLayout from "../layouts/DashboardLayout/DashboardLayout";
 import MyProfile from "../pages/Dashboard/MyProfile/MyProfile";
 import AddPost from "../pages/Dashboard/AddPost/AddPost";
 import AddTag from "../pages/Dashboard/Admin/AddTag";
 import MyPosts from "../pages/Dashboard/MyPosts/MyPosts";
 import AddAnnouncement from "../pages/Dashboard/Admin/AddAnnouncement/AddAnnouncement";
+import Home from "../pages/Home/Home";
 
 export const router = createBrowserRouter([
     {
@@ -20,7 +20,7 @@ export const router = createBrowserRouter([
         children: [
             {
                 index: true,
-                Component: Homes
+                Component: Home
             },
             {
                 path: 'joinUs',

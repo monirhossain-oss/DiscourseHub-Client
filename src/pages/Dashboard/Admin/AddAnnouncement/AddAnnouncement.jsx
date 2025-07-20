@@ -48,9 +48,9 @@ const AddAnnouncement = () => {
                 <div>
                     <label className="block text-sm mb-1">Message</label>
                     <textarea
-                        {...register('message', { required: 'Message is required' })}
+                        {...register('description', { required: 'Message is required' })}
                         className="textarea textarea-bordered w-full"
-                        placeholder="Announcement Message"
+                        placeholder="Announcement description"
                         rows={4}
                     ></textarea>
                     {errors.message && <p className="text-red-500 text-sm">{errors.message.message}</p>}
