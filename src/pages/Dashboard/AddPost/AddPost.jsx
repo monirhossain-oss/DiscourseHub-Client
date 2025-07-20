@@ -1,25 +1,37 @@
 import React from 'react';
-import useAuth from '../../../hooks/useAuth';
 import useAxiosSecure from '../../../hooks/useAxiosSecure';
 import { useForm } from 'react-hook-form';
 import { useQuery } from '@tanstack/react-query';
 import Swal from 'sweetalert2';
+import useAuth from '../../../hooks/useAuth';
 
 const AddPost = () => {
     const { user } = useAuth();
     const axiosSecure = useAxiosSecure();
 
-    const { data: postCountData = { count: 0 }, isLoading: loadingPostCount } = useQuery({
-        queryKey: ['userPostCount', user?.email],
+    // 🔹 Fetch user info (including isMember) from DB
+    const { data: userInfo = {}, isLoading: loadingUserInfo } = useQuery({
+        queryKey: ['userInfo', user?.email],
         queryFn: async () => {
-            const res = await axiosSecure.get(`/posts/count/${user?.email}`);
+            const res = await axiosSecure.get(`/users/${user?.email}`);
             return res.data;
         },
-        enabled: !!user?.email
+        enabled: !!user?.email,
     });
 
-    const postCount = postCountData.count;
+    // 🔹 Fetch post count for this user
+    const { data: userPosts = [] } = useQuery({
+        queryKey: ['userPosts', user?.email],
+        queryFn: async () => {
+            const res = await axiosSecure.get(`/posts?email=${user?.email}`);
+            return res.data;
+        },
+        enabled: !!user?.email,
+    });
+    const postCount = userPosts.length;
+    console.log(postCount)
 
+    // 🔹 Fetch available tags
     const { data: tags = [], isLoading: loadingTags } = useQuery({
         queryKey: ['tags'],
         queryFn: async () => {
@@ -30,6 +42,11 @@ const AddPost = () => {
 
     const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
+    // ✅ Determine if post limit is reached
+    const isLimitReached = !userInfo?.isMember && postCount >= 5;
+    console.log(isLimitReached)
+
+    // 🔹 Handle post submission
     const onSubmit = async (data) => {
         const postData = {
             authorImage: user.photoURL,
@@ -63,11 +80,10 @@ const AddPost = () => {
         }
     };
 
-    if (loadingPostCount || loadingTags) {
+    // 🔹 Handle loading state
+    if (loadingUserInfo || loadingTags) {
         return <p className="text-center py-8">Loading...</p>;
     }
-
-    const isLimitReached = !user.isMember && postCount >= 5;
 
     return (
         <div className="p-4">
@@ -90,7 +106,7 @@ const AddPost = () => {
                                 <label className="block text-sm mb-1">Author Name</label>
                                 <input
                                     type="text"
-                                    value={user.displayName}
+                                    value={user?.displayName}
                                     readOnly
                                     className="input input-bordered w-full"
                                 />
@@ -99,7 +115,7 @@ const AddPost = () => {
                                 <label className="block text-sm mb-1">Author Email</label>
                                 <input
                                     type="text"
-                                    value={user.email}
+                                    value={user?.email}
                                     readOnly
                                     className="input input-bordered w-full"
                                 />
@@ -130,10 +146,13 @@ const AddPost = () => {
                             {errors.description && <span className="text-red-500 text-sm">{errors.description.message}</span>}
                         </div>
 
-                        {/* Tag Dropdown */}
+                        {/* Tag */}
                         <div>
                             <label className="block text-sm mb-1">Select Tag</label>
-                            <select {...register('tag', { required: 'Please select a tag' })} className="select select-bordered w-full">
+                            <select
+                                {...register('tag', { required: 'Please select a tag' })}
+                                className="select select-bordered w-full"
+                            >
                                 <option value="">Select a tag</option>
                                 {tags.map(tag => (
                                     <option key={tag._id} value={tag.name}>{tag.name}</option>

@@ -22,7 +22,7 @@ const MyProfile = () => {
             const res = await axiosSecure.get(`/posts?email=${user?.email}&limit=3`);
             return res.data;
         },
-        enabled: !!user?.email
+        enabled: !!user?.email,
     });
 
     if (userLoading || postsLoading) {

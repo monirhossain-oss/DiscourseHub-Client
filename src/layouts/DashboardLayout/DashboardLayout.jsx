@@ -74,6 +74,14 @@ const DeshBoardLayout = () => {
                             <Tag size={18} /> Add Tags
                         </NavLink>
                     </li>
+                    <li>
+                        <NavLink
+                            to="/dashboard/add-announcments"
+                            className="flex items-center gap-2"
+                        >
+                            <Tag size={18} /> Add Announcment
+                        </NavLink>
+                    </li>
                 </ul>
             </div>
         </div>

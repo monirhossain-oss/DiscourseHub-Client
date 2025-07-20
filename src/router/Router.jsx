@@ -10,6 +10,8 @@ import DeshBoardLayout from "../layouts/DashboardLayout/DashboardLayout";
 import MyProfile from "../pages/Dashboard/MyProfile/MyProfile";
 import AddPost from "../pages/Dashboard/AddPost/AddPost";
 import AddTag from "../pages/Dashboard/Admin/AddTag";
+import MyPosts from "../pages/Dashboard/MyPosts/MyPosts";
+import AddAnnouncement from "../pages/Dashboard/Admin/AddAnnouncement/AddAnnouncement";
 
 export const router = createBrowserRouter([
     {
@@ -59,6 +61,14 @@ export const router = createBrowserRouter([
             {
                 path: 'add-tags',
                 Component: AddTag
+            },
+            {
+                path:"my-posts",
+                Component: MyPosts
+            },
+            {
+                path:'add-announcments',
+                Component:AddAnnouncement
             }
 
         ]

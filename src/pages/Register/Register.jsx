@@ -63,10 +63,11 @@ const Register = () => {
         googleSignIn()
             .then(async (result) => {
                 const user = result.user;
+                const photoURL= user.photoURL;
                 const userInfo = {
                     name: user.displayName || "No Name",
                     email: user.email,
-                    image: user.photoURL || "",
+                    image: photoURL || "",
                     role: "user",
                     badge: "bronze",
                     isMember: false,
