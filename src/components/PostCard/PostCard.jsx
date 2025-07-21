@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router';
+import { Link } from 'react-router'; // ঠিক করলাম
 import { FiThumbsUp, FiThumbsDown } from 'react-icons/fi';
 
 const PostCard = ({ post }) => {
@@ -19,7 +19,7 @@ const PostCard = ({ post }) => {
             </div>
 
             {/* Title */}
-            <Link to={`/post/${post._id}`}>
+            <Link to={`/posts/${post._id}`}>
                 <h3 className="text-lg font-bold text-gray-800 mb-2 hover:text-blue-600 transition">
                     {post.title}
                 </h3>
@@ -53,7 +53,7 @@ const PostCard = ({ post }) => {
                     </div>
                 </div>
                 <Link
-                    to={`/post/${post._id}`}
+                    to={`/posts/${post._id}`} // এখানে ঠিক করে দিলাম
                     className="text-blue-600 hover:underline text-sm"
                 >
                     View Details

@@ -98,7 +98,7 @@ const PostDetails = () => {
     };
 
     return (
-        <div className="max-w-xl mx-auto bg-white rounded-lg shadow-md mt-6 mb-10">
+        <div className="max-w-lg mx-auto bg-white rounded-lg shadow-md mt-6 mb-10">
             {/* Author Info */}
             <div className="flex items-center p-4 border-b">
                 <img
@@ -136,7 +136,7 @@ const PostDetails = () => {
                     <button
                         onClick={() => upvoteMutation.mutate()}
                         disabled={upvoteMutation.isLoading}
-                        className="flex items-center gap-1 hover:text-blue-600 transition"
+                        className="flex items-center cursor-pointer gap-1 hover:text-blue-600 transition"
                         aria-label="Like"
                     >
                         <FiThumbsUp size={20} /> {post.upVote || 0}
@@ -145,7 +145,7 @@ const PostDetails = () => {
                     <button
                         onClick={() => downvoteMutation.mutate()}
                         disabled={downvoteMutation.isLoading}
-                        className="flex items-center gap-1 hover:text-red-600 transition"
+                        className="flex items-center cursor-pointer gap-1 hover:text-red-600 transition"
                         aria-label="Dislike"
                     >
                         <FiThumbsDown size={20} /> {post.downVote || 0}
@@ -153,16 +153,16 @@ const PostDetails = () => {
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <FacebookShareButton url={shareUrl} quote={post.title}>
-                        <FacebookIcon size={28} round />
-                    </FacebookShareButton>
 
                     <button
                         onClick={() => setIsCommentModalOpen(true)}
-                        className="text-sm font-medium text-blue-600 hover:underline"
+                        className="text-sm font-medium bg-gray-300 px-2 py-1 rounded-2xl cursor-pointer text-blue-600 hover:underline"
                     >
                         Comment
                     </button>
+                    <FacebookShareButton url={shareUrl} quote={post.title}>
+                        <FacebookIcon size={28} round />
+                    </FacebookShareButton>
                 </div>
             </div>
 

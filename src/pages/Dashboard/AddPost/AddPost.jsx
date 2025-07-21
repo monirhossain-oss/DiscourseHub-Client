@@ -9,7 +9,7 @@ const AddPost = () => {
     const { user } = useAuth();
     const axiosSecure = useAxiosSecure();
 
-    // 🔹 Fetch user info (including isMember) from DB
+    
     const { data: userInfo = {}, isLoading: loadingUserInfo } = useQuery({
         queryKey: ['userInfo', user?.email],
         queryFn: async () => {
@@ -19,7 +19,7 @@ const AddPost = () => {
         enabled: !!user?.email,
     });
 
-    // 🔹 Fetch post count for this user
+    
     const { data: userPosts = [] } = useQuery({
         queryKey: ['userPosts', user?.email],
         queryFn: async () => {
@@ -31,7 +31,7 @@ const AddPost = () => {
     const postCount = userPosts.length;
     console.log(postCount)
 
-    // 🔹 Fetch available tags
+   
     const { data: tags = [], isLoading: loadingTags } = useQuery({
         queryKey: ['tags'],
         queryFn: async () => {
@@ -42,11 +42,11 @@ const AddPost = () => {
 
     const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
-    // ✅ Determine if post limit is reached
+    
     const isLimitReached = !userInfo?.isMember && postCount >= 5;
     console.log(isLimitReached)
 
-    // 🔹 Handle post submission
+   
     const onSubmit = async (data) => {
         const postData = {
             authorImage: user.photoURL,
@@ -80,7 +80,7 @@ const AddPost = () => {
         }
     };
 
-    // 🔹 Handle loading state
+    
     if (loadingUserInfo || loadingTags) {
         return <p className="text-center py-8">Loading...</p>;
     }
