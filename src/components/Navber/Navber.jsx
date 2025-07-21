@@ -4,12 +4,17 @@ import { FiMenu, FiX, FiBell } from "react-icons/fi";
 import useAuth from "../../hooks/useAuth";
 import Swal from "sweetalert2";
 import logo from '../../assets/logo.png';
+import useAnnouncementNotification from "../../hooks/useAnnouncementNotification"; // NEW
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [showNotifications, setShowNotifications] = useState(false); // NEW
+
     const navigate = useNavigate();
     const { user, logOut } = useAuth();
+
+    const { announcements, unseenCount, markAsSeen } = useAnnouncementNotification(); // NEW
 
     const handleLogout = () => {
         logOut()
@@ -31,10 +36,17 @@ const Navbar = () => {
             });
     };
 
+    const handleNotificationClick = () => {
+        setShowNotifications(!showNotifications);
+        if (!showNotifications && unseenCount > 0) {
+            markAsSeen();
+        }
+    };
+
     const navLinks = (
         <>
-            <li><NavLink to="/" className="font-semibold" onClick={() => setIsOpen(false)}>Home</NavLink></li>
-            <li><NavLink to="/membership" className="font-semibold" onClick={() => setIsOpen(false)}>Membership</NavLink></li>
+            <li><NavLink to="/" className="font-semibold px-4 py-1 rounded-sm" onClick={() => setIsOpen(false)}>Home</NavLink></li>
+            <li><NavLink to="/membership" className="font-semibold px-4 py-1 rounded-sm" onClick={() => setIsOpen(false)}>Membership</NavLink></li>
         </>
     );
 
@@ -42,13 +54,12 @@ const Navbar = () => {
         <nav className="bg-green-300 shadow sticky top-0 z-50">
             <div className="max-w-7xl px-2 md:px-4 lg:px-6 mx-auto ">
                 <div className="flex justify-between h-16 items-center">
-                    {/* Logo and site name */}
+                    {/* Logo */}
                     <Link to="/" className="flex items-center gap-2 font-bold text-xl">
                         <img src={logo} alt="Logo" className="w-10 rounded-full h-10" />
                         <span className="bg-gradient-to-r hidden md:block from-purple-500 to-pink-500 bg-clip-text text-transparent font-bold">
                             DiscourseHub
                         </span>
-
                     </Link>
 
                     {/* Desktop Links */}
@@ -56,9 +67,40 @@ const Navbar = () => {
                         <ul className="flex gap-4 items-center">
                             {navLinks}
                         </ul>
-                        <button className="btn btn-ghost btn-circle">
-                            <FiBell size={22} />
-                        </button>
+
+                        {/* Notification Icon */}
+                        <div className="relative">
+                            <button className="btn btn-ghost btn-circle relative" onClick={handleNotificationClick}>
+                                <FiBell size={22} />
+                                {unseenCount > 0 && (
+                                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                                        {unseenCount}
+                                    </span>
+                                )}
+                            </button>
+
+                            {/* Notification Dropdown */}
+                            {showNotifications && (
+                                <div className="absolute right-0 mt-2 w-72 bg-white rounded shadow-lg p-3 z-50 max-h-80 overflow-y-auto">
+                                    <h3 className="font-semibold mb-2">Announcements</h3>
+                                    {announcements.slice(0, 5).map((a) => (
+                                        <div key={a._id} className="border-b last:border-none py-1">
+                                            <p className="text-sm font-medium">{a.title}</p>
+                                            <p className="text-xs text-gray-500">
+                                                {new Date(a.createdAt).toLocaleDateString("en-US", {
+                                                    month: "short",
+                                                    day: "numeric",
+                                                    year: "numeric",
+                                                })}
+                                            </p>
+                                        </div>
+                                    ))}
+                                    {announcements.length === 0 && <p className="text-sm text-gray-600">No announcements available.</p>}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* User Avatar */}
                         {user ? (
                             <div className="relative">
                                 <img
@@ -94,11 +136,40 @@ const Navbar = () => {
                         )}
                     </div>
 
-                    {/* Mobile Menu Button */}
+                    {/* Mobile */}
                     <div className="md:hidden flex items-center gap-2">
-                        <button className="btn btn-ghost btn-circle">
-                            <FiBell size={22} />
-                        </button>
+                        {/* Notification Icon */}
+                        <div className="relative">
+                            <button className="btn btn-ghost btn-circle relative" onClick={handleNotificationClick}>
+                                <FiBell size={22} />
+                                {unseenCount > 0 && (
+                                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                                        {unseenCount}
+                                    </span>
+                                )}
+                            </button>
+
+                            {/* Notification Dropdown */}
+                            {showNotifications && (
+                                <div className="absolute right-0 mt-2 w-64 bg-white rounded shadow-lg p-3 z-50 max-h-80 overflow-y-auto">
+                                    <h3 className="font-semibold mb-2">Announcements</h3>
+                                    {announcements.slice(0, 5).map((a) => (
+                                        <div key={a._id} className="border-b last:border-none py-1">
+                                            <p className="text-sm font-medium">{a.title}</p>
+                                            <p className="text-xs text-gray-500">
+                                                {new Date(a.createdAt).toLocaleDateString("en-US", {
+                                                    month: "short",
+                                                    day: "numeric",
+                                                    year: "numeric",
+                                                })}
+                                            </p>
+                                        </div>
+                                    ))}
+                                    {announcements.length === 0 && <p className="text-sm text-gray-600">No announcements available.</p>}
+                                </div>
+                            )}
+                        </div>
+
                         <button onClick={() => setIsOpen(!isOpen)} className="text-2xl">
                             {isOpen ? <FiX /> : <FiMenu />}
                         </button>
