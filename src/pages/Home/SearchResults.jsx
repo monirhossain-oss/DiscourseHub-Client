@@ -1,33 +1,42 @@
 import React from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { Link } from 'react-router';
+import useAxiosSecure from '../../hooks/useAxiosSecure';
 
-const SearchResults = ({ posts }) => {
-    if (!posts.length) {
-        return <p className="text-center mt-4 text-gray-600">No posts found.</p>;
-    }
+const SearchResults = ({ searchedTag }) => {
+    const axiosSecure = useAxiosSecure();
+    const { data: posts = [], isLoading } = useQuery({
+        queryKey: ['postsByTag', searchedTag],
+        queryFn: async () => {
+            if (!searchedTag) return [];
+            const res = await axiosSecure.get(`/posts/tag/${searchedTag}`);
+            return res.data;
+        },
+        enabled: !!searchedTag,
+    });
+
+    if (!searchedTag) return null;
 
     return (
-        <section className="search-results max-w-4xl mx-auto">
-            {posts.map(post => (
-                <div key={post._id} className="post-card p-4 mb-4 border rounded shadow">
-                    <div className="flex items-center gap-3 mb-2">
-                        <img src={post.authorImage} alt={post.authorName} className="w-10 h-10 rounded-full object-cover" />
-                        <div>
-                            <p className="font-semibold">{post.authorName}</p>
-                            <p className="text-sm text-gray-500">{new Date(post.createdAt).toLocaleString()}</p>
-                        </div>
-                    </div>
-                    <h3 className="text-xl font-bold">{post.title}</h3>
-                    <p className="mt-2">{post.description}</p>
-                    <div className="mt-3 flex flex-wrap gap-2">
-                        {post.tags?.map(tag => (
-                            <span key={tag} className="bg-blue-200 text-blue-800 px-2 py-1 rounded text-sm">
-                                {tag}
-                            </span>
-                        ))}
-                    </div>
+        <div className="max-w-6xl mx-auto bg-gray-400 mt-8 rounded-2xl p-4">
+            <h2 className="text-lg font-semibold mb-4 text-center">Search Results for: "{searchedTag}"</h2>
+            {isLoading ? (
+                <div className="flex justify-center py-8">
+                    <span className="loading loading-spinner loading-lg"></span>
                 </div>
-            ))}
-        </section>
+            ) : posts.length === 0 ? (
+                <p className="text-center text-gray-500">No posts found for this tag.</p>
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {posts.map(post => (
+                        <Link key={post._id} to={`/posts/${post._id}`} className="block bg-white rounded shadow hover:shadow-lg p-4 border border-blue-300 transition">
+                            <h3 className="text-blue-600 font-semibold mb-1 truncate">{post.title}</h3>
+                            <p className="text-gray-600 text-sm line-clamp-3">{post.description}</p>
+                        </Link>
+                    ))}
+                </div>
+            )}
+        </div>
     );
 };
 
