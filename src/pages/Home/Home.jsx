@@ -2,6 +2,7 @@ import { useState } from "react";
 import AnnouncementSection from "./AnnouncementSection";
 import Banner from "./Banner";
 import SearchResults from "./SearchResults";
+import TagsSection from "./TagsSection";
 
 const Home = () => {
     const [searchedTag, setSearchedTag] = useState('');
@@ -11,6 +12,7 @@ const Home = () => {
             <Banner onSearch={setSearchedTag} />
             <SearchResults searchedTag={searchedTag} />
             <AnnouncementSection></AnnouncementSection>
+            <TagsSection></TagsSection>
         </div>
     );
 };
