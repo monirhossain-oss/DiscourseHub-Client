@@ -12,6 +12,7 @@ import AddTag from "../pages/Dashboard/Admin/AddTag";
 import MyPosts from "../pages/Dashboard/MyPosts/MyPosts";
 import AddAnnouncement from "../pages/Dashboard/Admin/AddAnnouncement/AddAnnouncement";
 import Home from "../pages/Home/Home";
+import PostDetails from "../pages/PostDetails/PostDetails";
 
 export const router = createBrowserRouter([
     {
@@ -29,6 +30,10 @@ export const router = createBrowserRouter([
             {
                 path: 'membership',
                 Component: Membership
+            },
+            {
+                path:'posts/:id',
+                Component: PostDetails
             }
         ]
     },
