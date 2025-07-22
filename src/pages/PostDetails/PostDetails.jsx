@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { useParams } from 'react-router';
+import { Link, useParams } from 'react-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
 import { FiThumbsUp, FiThumbsDown } from 'react-icons/fi';
 import { FacebookShareButton, FacebookIcon } from 'react-share';
 import useAuth from '../../hooks/useAuth';
+import { ArrowLeft } from 'lucide-react';
 
 const PostDetails = () => {
     const { id } = useParams();
@@ -100,15 +101,20 @@ const PostDetails = () => {
     return (
         <div className="max-w-lg mx-auto bg-white rounded-lg shadow-md mt-6 mb-10">
             {/* Author Info */}
-            <div className="flex items-center p-4 border-b">
-                <img
-                    src={post.authorImage || '/placeholder-user.png'}
-                    alt={post.authorName}
-                    className="w-12 h-12 rounded-full mr-4"
-                />
+            <div className="flex items-center justify-between p-4 border-b">
+                <div className='flex'>
+                    <img
+                        src={post.authorImage || '/placeholder-user.png'}
+                        alt={post.authorName}
+                        className="w-12 h-12 rounded-full mr-4"
+                    />
+                    <div>
+                        <p className="font-semibold text-gray-900">{post.authorName || 'Unknown'}</p>
+                        <p className="text-xs text-gray-500">{timeAgo(post.createdAt)}</p>
+                    </div>
+                </div>
                 <div>
-                    <p className="font-semibold text-gray-900">{post.authorName || 'Unknown'}</p>
-                    <p className="text-xs text-gray-500">{timeAgo(post.createdAt)}</p>
+                    <Link to='/'> <ArrowLeft  className='hover:bg-gray-400 rounded-full' /></Link>
                 </div>
             </div>
 

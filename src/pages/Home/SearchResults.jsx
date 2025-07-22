@@ -29,7 +29,7 @@ const SearchResults = ({ searchedTag }) => {
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {posts.map(post => (
-                        <Link key={post._id} to={`/posts/${post._id}`} className="block bg-white rounded shadow hover:shadow-lg p-4 border border-blue-300 transition">
+                        <Link key={post._id} to={`/posts/${post._id}`} className="block bg-white rounded shadow hover:bg-gray-300 hover:shadow-lg p-4 border border-blue-300 transition">
                             <h3 className="text-blue-600 font-semibold mb-1 truncate">{post.title}</h3>
                             <p className="text-gray-600 text-sm line-clamp-3">{post.description}</p>
                         </Link>

@@ -3,6 +3,7 @@ import AnnouncementSection from "./AnnouncementSection";
 import Banner from "./Banner";
 import SearchResults from "./SearchResults";
 import TagsSection from "./TagsSection";
+import PostList from "./PostList";
 
 const Home = () => {
     const [searchedTag, setSearchedTag] = useState('');
@@ -11,8 +12,9 @@ const Home = () => {
         <div className="home-page">
             <Banner onSearch={setSearchedTag} />
             <SearchResults searchedTag={searchedTag} />
-            <AnnouncementSection></AnnouncementSection>
             <TagsSection></TagsSection>
+            <AnnouncementSection></AnnouncementSection>
+            <PostList></PostList>
         </div>
     );
 };

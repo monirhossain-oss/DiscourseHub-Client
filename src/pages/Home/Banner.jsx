@@ -27,8 +27,8 @@ const Banner = ({ onSearch }) => {
                 >
                     Welcome to DiscourseHub
                 </h1>
-                <p className="mb-6 text-black text-sm md:text-lg">Search posts by tags and explore discussions easily</p>
-                <form onSubmit={handleSubmit} className="flex w-full max-w-md bg-gray-300 opacity-75 rounded overflow-hidden shadow">
+                <p className="mb-6 text-gray-600 font-bold text-sm md:text-lg">Search posts by tags and explore discussions easily</p>
+                <form onSubmit={handleSubmit} className="flex w-full max-w-md bg-gray-300 opacity-75 rounded-4xl overflow-hidden shadow">
                     <input
                         type="text"
                         placeholder="Search by tag (e.g., react)"

@@ -1,8 +1,15 @@
 import React from 'react';
-import { Link } from 'react-router'; // ঠিক করলাম
+import { Link } from 'react-router';
 import { FiThumbsUp, FiThumbsDown } from 'react-icons/fi';
+import { FaCommentDots } from 'react-icons/fa';
 
 const PostCard = ({ post }) => {
+    const formattedDate = new Date(post.createdAt).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+    });
+
     return (
         <div className="bg-white rounded-xl shadow hover:shadow-lg transition duration-300 p-4 flex flex-col justify-between">
             {/* Author */}
@@ -14,7 +21,7 @@ const PostCard = ({ post }) => {
                 />
                 <div>
                     <p className="font-semibold">{post.authorName || 'Unknown Author'}</p>
-                    <p className="text-xs text-gray-500">{new Date(post.createdAt).toLocaleString()}</p>
+                    <p className="text-xs text-gray-500">{formattedDate}</p>
                 </div>
             </div>
 
@@ -35,7 +42,7 @@ const PostCard = ({ post }) => {
                 {post.tags?.map((tag, idx) => (
                     <span
                         key={idx}
-                        className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full"
+                        className="text-xs bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 px-2 py-0.5 rounded-full"
                     >
                         #{tag}
                     </span>
@@ -51,9 +58,12 @@ const PostCard = ({ post }) => {
                     <div className="flex items-center gap-1">
                         <FiThumbsDown /> {post.downVote || 0}
                     </div>
+                    <div className="flex items-center gap-1">
+                        <FaCommentDots /> {post.commentsCount || 0}
+                    </div>
                 </div>
                 <Link
-                    to={`/posts/${post._id}`} // এখানে ঠিক করে দিলাম
+                    to={`/posts/${post._id}`}
                     className="text-blue-600 hover:underline text-sm"
                 >
                     View Details
