@@ -12,7 +12,7 @@ const Banner = ({ onSearch }) => {
     };
 
     return (
-        <div className="relative h-[500px] rounded-b-2xl flex items-center justify-center text-center text-white overflow-hidden">
+        <div className="relative h-[300px] md:h-[500px] rounded-b-2xl flex items-center justify-center text-center text-white overflow-hidden">
            
             <div
                 className="absolute inset-0 bg-cover bg-center"

@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { useQuery } from '@tanstack/react-query';
 import Swal from 'sweetalert2';
 import useAuth from '../../../hooks/useAuth';
+import { Link } from 'react-router';
 
 const AddPost = () => {
     const { user } = useAuth();
@@ -95,7 +96,7 @@ const AddPost = () => {
                         <p className="text-red-600 font-semibold mb-4">
                             You have reached the limit of 5 posts.
                         </p>
-                        <button className="btn btn-warning">Become a Member</button>
+                        <Link to='/membership' className="btn btn-warning">Become a Member</Link>
                     </div>
                 ) : (
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
