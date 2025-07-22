@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavLink, Outlet } from 'react-router';
 import { FileText, Home, PlusCircle, Tag, User } from 'lucide-react';
+import Navbar from '../../components/Navber/Navber';
 
 const DeshBoardLayout = () => {
     return (
@@ -27,7 +28,6 @@ const DeshBoardLayout = () => {
                         </label>
                     </div>
                     <div className="mx-2 flex-1 px-2">Deshboard</div>
-
                 </div>
                 {/* Page content here */}
                 <Outlet></Outlet>
