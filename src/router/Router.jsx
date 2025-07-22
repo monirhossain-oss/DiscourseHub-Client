@@ -14,6 +14,7 @@ import AddAnnouncement from "../pages/Dashboard/Admin/AddAnnouncement/AddAnnounc
 import Home from "../pages/Home/Home";
 import PostDetails from "../pages/PostDetails/PostDetails";
 import TagPostsPage from "../pages/TagPostsPage/TagPostsPage";
+import PrivetRoutes from "../routes/PrivetRoutes/PrivetRoutes";
 
 export const router = createBrowserRouter([
     {
@@ -30,7 +31,7 @@ export const router = createBrowserRouter([
             },
             {
                 path: 'membership',
-                Component: Membership
+                element: <PrivetRoutes><Membership></Membership></PrivetRoutes>
             },
             {
                 path:'posts/:id',
