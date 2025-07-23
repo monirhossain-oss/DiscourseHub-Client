@@ -31,7 +31,7 @@ const MyProfile = () => {
     }
 
     return (
-        <div className="p-4 max-w-6xl mx-auto">
+        <div className="p-4 bg-gray-200">
             {/* Profile Card */}
             <div className="bg-white p-6 rounded shadow mb-6 max-w-sm mx-auto">
                 <img
@@ -49,8 +49,8 @@ const MyProfile = () => {
             </div>
 
             {/* Recent Posts Grid */}
-            <div className="bg-white p-6 rounded shadow">
-                <h3 className="text-lg font-bold mb-4 text-center">Your Recent Posts</h3>
+            <div className="bg-gray-300 p-6 rounded shadow">
+                <h3 className="text-xl font-bold mb-4 text-center">Your Recent Posts</h3>
                 {recentPosts.length === 0 ? (
                     <p className="text-gray-600 text-center">You have no posts yet.</p>
                 ) : (

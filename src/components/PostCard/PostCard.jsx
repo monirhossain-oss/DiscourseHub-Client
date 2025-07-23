@@ -11,7 +11,7 @@ const PostCard = ({ post }) => {
     });
 
     return (
-        <div className="bg-white rounded-xl shadow hover:shadow-lg transition duration-300 p-4 flex flex-col justify-between">
+        <div className="bg-white rounded-xl shadow hover:shadow-lg hover:scale-105 transition duration-300 p-4 flex flex-col justify-between">
             {/* Author */}
             <div className="flex items-center gap-3 mb-3">
                 <img
