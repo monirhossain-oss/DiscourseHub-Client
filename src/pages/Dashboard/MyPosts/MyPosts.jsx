@@ -153,10 +153,11 @@ const MyPosts = () => {
                                     {comments.map(comment => {
                                         const isLongComment = comment.text.length > 20;
                                         const feedbackGiven = !!comment.feedback;
+                                        console.log(comment)
 
                                         return (
                                             <tr key={comment._id} className="hover:bg-gray-50">
-                                                <td className="border border-gray-300 px-4 py-2 break-words">{comment.commenterEmail}</td>
+                                                <td className="border border-gray-300 px-4 py-2 break-words">{comment.authorEmail}</td>
                                                 <td className="border border-gray-300 px-4 py-2 break-words">
                                                     {isLongComment ? (
                                                         <>

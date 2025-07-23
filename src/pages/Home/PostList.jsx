@@ -39,7 +39,7 @@ const PostListSection = () => {
     if (isLoading) return <div className="text-center py-10">Loading posts...</div>;
 
     return (
-        <section className=" bg-gray-300 rounded-2xl p-4 mt-8">
+        <section className=" bg-gray-300 rounded-2xl p-4 my-8">
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-2xl font-bold text-center w-full">📚 Latest Posts</h2>
             </div>

@@ -4,17 +4,29 @@ import { FiMenu, FiX, FiBell } from "react-icons/fi";
 import useAuth from "../../hooks/useAuth";
 import Swal from "sweetalert2";
 import logo from '../../assets/logo.png';
-import useAnnouncementNotification from "../../hooks/useAnnouncementNotification"; // NEW
+import useAnnouncementNotification from "../../hooks/useAnnouncementNotification";
+import { useQuery } from "@tanstack/react-query";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [dropdownOpen, setDropdownOpen] = useState(false);
-    const [showNotifications, setShowNotifications] = useState(false); // NEW
+    const [showNotifications, setShowNotifications] = useState(false);
+    const axiosSecure= useAxiosSecure();
 
     const navigate = useNavigate();
     const { user, logOut } = useAuth();
 
-    const { announcements, unseenCount, markAsSeen } = useAnnouncementNotification(); // NEW
+    const { announcements, unseenCount, markAsSeen } = useAnnouncementNotification();
+
+    const { data: userInfo = {}, } = useQuery({
+        queryKey: ['userInfo', user?.email],
+        queryFn: async () => {
+            const res = await axiosSecure.get(`/users/${user?.email}`);
+            return res.data;
+        },
+        enabled: !!user?.email
+    });
 
     const handleLogout = () => {
         logOut()
@@ -104,7 +116,7 @@ const Navbar = () => {
                         {user ? (
                             <div className="relative">
                                 <img
-                                    src={user.photoURL || "/placeholder-user.png"}
+                                    src={userInfo.image || "/placeholder-user.png"}
                                     alt="Profile"
                                     className="w-10 h-10 rounded-full cursor-pointer"
                                     onClick={() => setDropdownOpen(!dropdownOpen)}

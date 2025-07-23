@@ -3,13 +3,15 @@ import { Link, useNavigate, useLocation } from "react-router";
 import { FcGoogle } from "react-icons/fc";
 import useAuth from "../../hooks/useAuth";
 import Swal from "sweetalert2";
+import useAxios from "../../hooks/useAxios";
 
 export default function Login() {
     const { register, handleSubmit, formState: { errors } } = useForm({
-        mode: "onChange" // টাইপিং এর সাথেই validate হবে
+        mode: "onChange"
     });
     const navigate = useNavigate();
     const location = useLocation();
+    const axiosInstance=useAxios();
     const from = location.state?.from?.pathname || "/";
     const { signIn, googleSignIn } = useAuth();
 
@@ -36,24 +38,30 @@ export default function Login() {
 
     const handleGoogleLogin = () => {
         googleSignIn()
-            .then(result => {
-                Swal.fire({
-                    icon: "success",
-                    title: "Google Login Successful!",
-                    text: `Welcome, ${result.user.displayName || "User"}!`,
-                    timer: 2000,
-                    showConfirmButton: false,
-                });
+            .then(async (result) => {
+                const user = result.user;
+                const photoURL = user.photoURL;
+                const userInfo = {
+                    name: user.displayName || "No Name",
+                    email: user.email,
+                    image: photoURL || "",
+                    role: "user",
+                    badge: "bronze",
+                    isMember: false,
+                    created_At: new Date().toISOString(),
+                    last_log_in: new Date().toISOString(),
+                };
+
+                await axiosInstance.post("/users", userInfo);
+
+                Swal.fire("Success", "Google Sign-in Successful!", "success");
                 navigate(from, { replace: true });
             })
-            .catch(error => {
-                Swal.fire({
-                    icon: "error",
-                    title: "Google Login Failed!",
-                    text: error.message,
-                });
+            .catch((error) => {
+                Swal.fire("Error", error.message, "error");
             });
     };
+
 
     return (
         <div className="p-8 rounded shadow w-full max-w-sm mx-auto">
