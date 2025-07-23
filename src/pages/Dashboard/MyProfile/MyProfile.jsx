@@ -2,6 +2,7 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import useAuth from '../../../hooks/useAuth';
 import useAxiosSecure from '../../../hooks/useAxiosSecure';
+import PostCard from '../../../components/PostCard/PostCard'; // ✅ Import your PostCard
 
 const MyProfile = () => {
     const { user } = useAuth();
@@ -30,8 +31,7 @@ const MyProfile = () => {
     }
 
     return (
-        <div className="p-4">
-
+        <div className="p-4 max-w-6xl mx-auto">
             {/* Profile Card */}
             <div className="bg-white p-6 rounded shadow mb-6 max-w-sm mx-auto">
                 <img
@@ -56,20 +56,10 @@ const MyProfile = () => {
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {recentPosts.map(post => (
-                            <div key={post._id} className="border rounded p-4 shadow-sm hover:shadow transition">
-                                <h4 className="font-semibold text-lg mb-1">{post.title}</h4>
-                                <p className="text-gray-500 text-sm mb-2">
-                                    {new Date(post.createdAt).toLocaleString()}
-                                </p>
-                                <p className="text-gray-700 text-sm mb-2">{post.description?.slice(0, 80)}...</p>
-                                <div className="mt-2 flex flex-wrap gap-1">
-                                    {post.tags?.map(tag => (
-                                        <span key={tag} className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
-                                            {tag}
-                                        </span>
-                                    ))}
-                                </div>
-                            </div>
+                            <PostCard
+                                key={post._id}
+                                post={post}
+                            />
                         ))}
                     </div>
                 )}

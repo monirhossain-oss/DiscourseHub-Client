@@ -28,8 +28,10 @@ const DeshBoardLayout = () => {
                         </label>
                     </div>
                     <div className="mx-2 flex-1 px-2">Deshboard</div>
+
                 </div>
                 {/* Page content here */}
+                <Navbar></Navbar>
                 <Outlet></Outlet>
                 {/* Page content here */}
             </div>
