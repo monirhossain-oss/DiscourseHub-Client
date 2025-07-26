@@ -38,19 +38,19 @@ const PostDetails = () => {
         enabled: !!user && !!id,
     });
 
-    // Upvote mutation
+    // Upvote
     const upvoteMutation = useMutation({
         mutationFn: () => axiosSecure.patch(`/posts/${id}/upvote`),
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ['post', id] }),
     });
 
-    // Downvote mutation
+    // Downvote
     const downvoteMutation = useMutation({
         mutationFn: () => axiosSecure.patch(`/posts/${id}/downvote`),
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ['post', id] }),
     });
 
-    // Add comment mutation
+    // Add comment 
     const addCommentMutation = useMutation({
         mutationFn: (newComment) => axiosSecure.post('/comments', newComment),
         onSuccess: () => {
@@ -88,7 +88,7 @@ const PostDetails = () => {
     const timeAgo = (date) => {
         const now = new Date();
         const postedDate = new Date(date);
-        const diff = Math.floor((now - postedDate) / 1000); // seconds
+        const diff = Math.floor((now - postedDate) / 1000);
 
         if (diff < 60) return `${diff} seconds ago`;
         if (diff < 3600) return `${Math.floor(diff / 60)} minutes ago`;

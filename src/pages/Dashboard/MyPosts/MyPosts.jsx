@@ -11,7 +11,9 @@ const MyPosts = () => {
 
     const [activePostId, setActivePostId] = useState(null);
     const [readMoreComment, setReadMoreComment] = useState(null);
+    const [selectedFeedbacks, setSelectedFeedbacks] = useState({});
 
+    // Get user posts
     const { data: posts = [], isLoading: loadingPosts } = useQuery({
         queryKey: ['userPosts', user?.email],
         queryFn: async () => {
@@ -20,8 +22,9 @@ const MyPosts = () => {
         },
         enabled: !!user?.email,
     });
-    console.log(posts)
+    // console.log(user)
 
+    // Get comments for selected post
     const { data: comments = [], isLoading: loadingComments } = useQuery({
         queryKey: ['comments', activePostId],
         queryFn: async () => {
@@ -32,6 +35,7 @@ const MyPosts = () => {
         enabled: !!activePostId,
     });
 
+    // Delete post mutation
     const deletePostMutation = useMutation({
         mutationFn: async (postId) => {
             const res = await axiosSecure.delete(`/posts/${postId}`);
@@ -47,15 +51,33 @@ const MyPosts = () => {
         },
     });
 
-    const feedbackMutation = useMutation({
-        mutationFn: async ({ commentId, feedback }) => {
-            const res = await axiosSecure.patch(`/comments/${commentId}/feedback`, { feedback });
+    // Report comment mutation
+    const reportCommentMutation = useMutation({
+        mutationFn: async ({ commentId, reason, feedback }) => {
+            console.log('Inside mutationFn user:', user);
+            console.log(feedback)
+            const res = await axiosSecure.patch(`/comments/${commentId}/report`, {
+                reported: true,
+                reportedByName: user.displayName,
+                reportedByEmail: user.email,
+                reportedReason: reason,
+                reportedAt: new Date(),
+                feedback: feedback
+            });
+
             return res.data;
         },
         onSuccess: () => {
-            queryClient.invalidateQueries(['comments', activePostId]);
+            Swal.fire('Reported!', 'Thank you for reporting.', 'success');
+            queryClient.invalidateQueries(['myposts', user?.email]);
+        },
+        onError: () => {
+            Swal.fire('Error!', 'Failed to report comment.', 'error');
         },
     });
+
+
+
 
     const handleDeletePost = (postId) => {
         Swal.fire({
@@ -74,16 +96,37 @@ const MyPosts = () => {
     };
 
     const handleFeedbackChange = (commentId, e) => {
-        const feedback = e.target.value;
-        feedbackMutation.mutate({ commentId, feedback });
+        const newFeedback = e.target.value;
+        setSelectedFeedbacks(prev => ({
+            ...prev,
+            [commentId]: newFeedback
+        }));
     };
 
-    if (loadingPosts) {
-        return <p className="text-center py-8">Loading posts...</p>;
-    }
+    const handleReportComment = (commentId) => {
+        if (!user?.email) {
+            Swal.fire('Error', 'You must be logged in to report.', 'error');
+            return;
+        }
+        const feedback = selectedFeedbacks[commentId] || '';
+
+        if (!feedback) {
+            Swal.fire('Error', 'Please select feedback before reporting.', 'error');
+            return;
+        }
+
+        reportCommentMutation.mutate({
+            commentId,
+            feedback,
+            user
+        });
+    };
+
+
+    if (loadingPosts) return <p className="text-center py-8">Loading posts...</p>;
 
     return (
-        <div className="p-4">
+        <div className="p-4 bg-gray-300 rounded-2xl">
             <h1 className="text-3xl font-bold mb-6 text-center">My Posts</h1>
 
             {posts.length === 0 ? (
@@ -92,32 +135,22 @@ const MyPosts = () => {
                 <table className="table-auto w-full border-collapse border border-gray-300">
                     <thead>
                         <tr className="bg-gray-100">
-                            <th className="border border-gray-300 px-4 py-2">Title</th>
-                            <th className="border border-gray-300 px-4 py-2">Vote Count (Up - Down)</th>
-                            <th className="border border-gray-300 px-4 py-2">Comments</th>
-                            <th className="border border-gray-300 px-4 py-2">Delete</th>
+                            <th className="border px-4 py-2">Title</th>
+                            <th className="border px-4 py-2">Vote Count</th>
+                            <th className="border px-4 py-2">Comments</th>
+                            <th className="border px-4 py-2">Delete</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {posts?.map(post => (
-                            <tr key={post._id} className="hover:bg-gray-50">
-                                <td className="border border-gray-300 px-4 py-2">{post.title}</td>
-                                <td className="border border-gray-300 px-4 py-2">{post.upVote} - {post.downVote}</td>
-                                <td className="border border-gray-300 px-4 py-2 text-center">
-                                    <button
-                                        onClick={() => setActivePostId(post._id)}
-                                        className="btn btn-sm btn-info"
-                                    >
-                                        View Comments
-                                    </button>
+                        {posts.map(post => (
+                            <tr key={post._id}>
+                                <td className="border px-4 py-2">{post.title}</td>
+                                <td className="border px-4 py-2">{post.upVote} - {post.downVote}</td>
+                                <td className="border px-4 py-2 text-center">
+                                    <button onClick={() => setActivePostId(post._id)} className="btn btn-info btn-sm">View Comments</button>
                                 </td>
-                                <td className="border border-gray-300 px-4 py-2 text-center">
-                                    <button
-                                        onClick={() => handleDeletePost(post._id)}
-                                        className="btn btn-sm btn-error"
-                                    >
-                                        Delete
-                                    </button>
+                                <td className="border px-4 py-2 text-center">
+                                    <button onClick={() => handleDeletePost(post._id)} className="btn btn-error btn-sm">Delete</button>
                                 </td>
                             </tr>
                         ))}
@@ -129,12 +162,7 @@ const MyPosts = () => {
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-start pt-20 z-50">
                     <div className="bg-white w-full max-w-4xl rounded shadow-lg p-6 relative max-h-[80vh] overflow-y-auto">
                         <h2 className="text-xl font-bold mb-4">Comments</h2>
-                        <button
-                            onClick={() => setActivePostId(null)}
-                            className="absolute top-4 right-4 text-gray-600 hover:text-gray-900 text-2xl font-bold"
-                        >
-                            &times;
-                        </button>
+                        <button onClick={() => setActivePostId(null)} className="absolute top-4 right-4 text-gray-600 text-2xl">&times;</button>
 
                         {loadingComments ? (
                             <p>Loading comments...</p>
@@ -144,56 +172,48 @@ const MyPosts = () => {
                             <table className="table-auto w-full border-collapse border border-gray-300">
                                 <thead>
                                     <tr className="bg-gray-100">
-                                        <th className="border border-gray-300 px-4 py-2">Commenter Email</th>
-                                        <th className="border border-gray-300 px-4 py-2">Comment Text</th>
-                                        <th className="border border-gray-300 px-4 py-2">Feedback</th>
-                                        <th className="border border-gray-300 px-4 py-2">Report</th>
+                                        <th className="border px-4 py-2">Commenter Email</th>
+                                        <th className="border px-4 py-2">Comment</th>
+                                        <th className="border px-4 py-2">Feedback</th>
+                                        <th className="border px-4 py-2">Report</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {comments.map(comment => {
-                                        const isLongComment = comment.text.length > 20;
-                                        const feedbackGiven = !!comment.feedback;
-                                        console.log(comment)
+                                        const isLong = comment.text.length > 20;
+                                        const selected = selectedFeedbacks[comment._id] || '';
 
                                         return (
-                                            <tr key={comment._id} className="hover:bg-gray-50">
-                                                <td className="border border-gray-300 px-4 py-2 break-words">{comment.authorEmail}</td>
-                                                <td className="border border-gray-300 px-4 py-2 break-words">
-                                                    {isLongComment ? (
+                                            <tr key={comment._id}>
+                                                <td className="border px-4 py-2 break-words">{comment.authorEmail}</td>
+                                                <td className="border px-4 py-2 break-words">
+                                                    {isLong ? (
                                                         <>
                                                             {comment.text.slice(0, 20)}...
-                                                            <button
-                                                                onClick={() => setReadMoreComment(comment.text)}
-                                                                className="text-blue-600 ml-2 underline text-sm"
-                                                            >
-                                                                Read More
-                                                            </button>
+                                                            <button onClick={() => setReadMoreComment(comment.text)} className="text-blue-600 text-sm ml-2 underline">Read More</button>
                                                         </>
-                                                    ) : (
-                                                        comment.text
-                                                    )}
+                                                    ) : comment.text}
                                                 </td>
-                                                <td className="border border-gray-300 px-4 py-2 text-center">
+                                                <td className="border px-4 py-2 text-center">
                                                     <select
-                                                        disabled={feedbackGiven}
-                                                        defaultValue={comment.feedback || ''}
+                                                        value={selected}
                                                         onChange={(e) => handleFeedbackChange(comment._id, e)}
                                                         className="select select-bordered w-full max-w-[150px]"
+                                                        disabled={comment.reported}
                                                     >
                                                         <option value="">Select Feedback</option>
-                                                        <option value="helpful">Helpful</option>
-                                                        <option value="notHelpful">Not Helpful</option>
-                                                        <option value="neutral">Neutral</option>
+                                                        <option value="Spam">Spam</option>
+                                                        <option value="Offensive">Offensive</option>
+                                                        <option value="Irrelevant">Irrelevant</option>
                                                     </select>
                                                 </td>
-                                                <td className="border border-gray-300 px-4 py-2 text-center">
+                                                <td className="border px-4 py-2 text-center">
                                                     <button
-                                                        disabled={!feedbackGiven}
-                                                        className={`btn btn-sm btn-warning ${!feedbackGiven ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                                        onClick={() => Swal.fire('Reported', 'Thank you for your report.', 'success')}
+                                                        onClick={() => handleReportComment(comment._id)}
+                                                        disabled={!selected || comment.reported}
+                                                        className={`btn btn-sm btn-warning ${(!selected || comment.reported) ? 'opacity-50 cursor-not-allowed' : ''}`}
                                                     >
-                                                        Report
+                                                        {comment.reported ? 'Reported' : 'Report'}
                                                     </button>
                                                 </td>
                                             </tr>
@@ -205,13 +225,8 @@ const MyPosts = () => {
 
                         {readMoreComment && (
                             <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-60">
-                                <div className="bg-white rounded p-6 max-w-lg w-full relative">
-                                    <button
-                                        onClick={() => setReadMoreComment(null)}
-                                        className="absolute top-2 right-2 text-2xl font-bold text-gray-700 hover:text-black"
-                                    >
-                                        &times;
-                                    </button>
+                                <div className="bg-white p-6 rounded shadow-lg max-w-md w-full relative">
+                                    <button onClick={() => setReadMoreComment(null)} className="absolute top-2 right-2 text-2xl text-gray-600 hover:text-black">&times;</button>
                                     <p>{readMoreComment}</p>
                                 </div>
                             </div>

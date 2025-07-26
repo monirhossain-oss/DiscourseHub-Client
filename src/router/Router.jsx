@@ -16,6 +16,7 @@ import TagPostsPage from "../pages/TagPostsPage/TagPostsPage";
 import PrivetRoutes from "../routes/PrivetRoutes/PrivetRoutes";
 import ManageUsers from "../pages/Dashboard/Admin/ManageUsers/ManageUsers";
 import DeshBoardLayout from "../layouts/DashboardLayout/DashboardLayout";
+import ReportedComments from "../pages/Dashboard/Admin/ReportedComments/ReportedComments";
 
 export const router = createBrowserRouter([
     {
@@ -85,6 +86,10 @@ export const router = createBrowserRouter([
             {
                 path: 'manage-users',
                 Component: ManageUsers
+            },
+            {
+                path: 'reported-comments',
+                Component: ReportedComments
             }
 
         ]
