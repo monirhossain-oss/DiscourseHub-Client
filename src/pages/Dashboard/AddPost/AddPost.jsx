@@ -45,7 +45,7 @@ const AddPost = () => {
 
     
     const isLimitReached = !userInfo?.isMember && postCount >= 5;
-    console.log(isLimitReached)
+    // console.log(isLimitReached)
 
    
     const onSubmit = async (data) => {

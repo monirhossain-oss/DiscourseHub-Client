@@ -3,12 +3,14 @@ import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import Swal from 'sweetalert2';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
 import useAuth from '../../hooks/useAuth';
+import { useNavigate } from 'react-router';
 
 const PaymentForm = ({ price }) => {
     const stripe = useStripe();
     const elements = useElements();
     const axiosSecure = useAxiosSecure();
     const { user } = useAuth();
+    const navigate = useNavigate();
 
     const [clientSecret, setClientSecret] = useState('');
     const [processing, setProcessing] = useState(false);
@@ -115,6 +117,8 @@ const PaymentForm = ({ price }) => {
                 });
 
                 await fetchUserFromDb();
+                navigate('/dashboard/add-post')
+                
 
                 Swal.fire('Success', 'Membership upgraded successfully!', 'success');
             } catch (err) {
