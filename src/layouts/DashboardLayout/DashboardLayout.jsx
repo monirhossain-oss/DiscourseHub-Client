@@ -1,7 +1,8 @@
 import React from 'react';
 import { NavLink, Outlet } from 'react-router';
-import { FileText, Home, PlusCircle, Tag, User } from 'lucide-react';
 import Navbar from '../../components/Navber/Navber';
+import { AlertCircle, FilePlus, Home, ListOrdered, Megaphone, ShieldCheck, Tags, UserCircle, Users2 } from 'lucide-react';
+import Footer from '../../components/Foote/Footer';
 
 const DeshBoardLayout = () => {
     return (
@@ -35,34 +36,62 @@ const DeshBoardLayout = () => {
                                 <Home size={18} /> Home
                             </NavLink>
                         </li>
+
+                        {/* ===== USER DASHBOARD ===== */}
+
                         <li>
                             <NavLink to="/dashboard/my-profile" className="flex items-center gap-2">
-                                <User size={18} /> My Profile
+                                <UserCircle size={18} /> My Profile
                             </NavLink>
                         </li>
+
                         <li>
                             <NavLink to="/dashboard/add-post" className="flex items-center gap-2">
-                                <PlusCircle size={18} /> Add Post
+                                <FilePlus size={18} /> Add Post
                             </NavLink>
                         </li>
+
                         <li>
                             <NavLink to="/dashboard/my-posts" className="flex items-center gap-2">
-                                <FileText size={18} /> My Posts
+                                <ListOrdered size={18} /> My Posts
                             </NavLink>
                         </li>
+                        {/* ===== ADMIN DASHBOARD ===== */}
+
                         <li>
                             <NavLink to="/dashboard/add-tags" className="flex items-center gap-2">
-                                <Tag size={18} /> Add Tags
+                                <Tags size={18} /> Add Tags
                             </NavLink>
                         </li>
+
                         <li>
-                            <NavLink to="/dashboard/add-announcments" className="flex items-center gap-2">
-                                <Tag size={18} /> Add Announcement
+                            <NavLink to="/dashboard/add-announcements" className="flex items-center gap-2">
+                                <Megaphone size={18} /> Add Announcement
                             </NavLink>
                         </li>
+
+                        <li>
+                            <NavLink to="/dashboard/profile" className="flex items-center gap-2">
+                                <ShieldCheck size={18} /> Admin Profile
+                            </NavLink>
+                        </li>
+
+                        <li>
+                            <NavLink to="/dashboard/manage-users" className="flex items-center gap-2">
+                                <Users2 size={18} /> Manage Users
+                            </NavLink>
+                        </li>
+
+                        <li>
+                            <NavLink to="/dashboard/reported-comments" className="flex items-center gap-2">
+                                <AlertCircle size={18} /> Reported Comments
+                            </NavLink>
+                        </li>
+
                     </ul>
                 </div>
             </div>
+            <Footer></Footer>
         </div>
     );
 };

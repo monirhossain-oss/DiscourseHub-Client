@@ -5,7 +5,6 @@ import Membership from "../pages/Membership/Membership";
 import AuthLayout from "../layouts/AuthLayout/AuthLayout";
 import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
-import DeshBoardLayout from "../layouts/DashboardLayout/DashboardLayout";
 import MyProfile from "../pages/Dashboard/MyProfile/MyProfile";
 import AddPost from "../pages/Dashboard/AddPost/AddPost";
 import AddTag from "../pages/Dashboard/Admin/AddTag";
@@ -15,6 +14,8 @@ import Home from "../pages/Home/Home";
 import PostDetails from "../pages/PostDetails/PostDetails";
 import TagPostsPage from "../pages/TagPostsPage/TagPostsPage";
 import PrivetRoutes from "../routes/PrivetRoutes/PrivetRoutes";
+import ManageUsers from "../pages/Dashboard/Admin/ManageUsers/ManageUsers";
+import DeshBoardLayout from "../layouts/DashboardLayout/DashboardLayout";
 
 export const router = createBrowserRouter([
     {
@@ -34,12 +35,12 @@ export const router = createBrowserRouter([
                 element: <PrivetRoutes><Membership></Membership></PrivetRoutes>
             },
             {
-                path:'posts/:id',
+                path: 'posts/:id',
                 Component: PostDetails
             },
             {
-                path:'tags/:tagName',
-                Component:TagPostsPage
+                path: 'tags/:tagName',
+                Component: TagPostsPage
             }
         ]
     },
@@ -58,15 +59,15 @@ export const router = createBrowserRouter([
         ]
     },
     {
-        path:'dashboard',
-        Component: DeshBoardLayout,
+        path: 'dashboard',
+        element: <PrivetRoutes><DeshBoardLayout></DeshBoardLayout></PrivetRoutes>,
         children: [
             {
-                path:'my-profile',
+                path: 'my-profile',
                 Component: MyProfile
             },
             {
-                path:'add-post',
+                path: 'add-post',
                 Component: AddPost
             },
             {
@@ -74,12 +75,16 @@ export const router = createBrowserRouter([
                 Component: AddTag
             },
             {
-                path:"my-posts",
+                path: "my-posts",
                 Component: MyPosts
             },
             {
-                path:'add-announcments',
-                Component:AddAnnouncement
+                path: 'add-announcements',
+                Component: AddAnnouncement
+            },
+            {
+                path: 'manage-users',
+                Component: ManageUsers
             }
 
         ]

@@ -30,6 +30,10 @@ const Footer = () => {
                 {/* Social Media */}
                 <div className="flex flex-col items-center md:items-start">
                     <h3 className="text-md text-blue-500 font-semibold mb-2">Follow Us</h3>
+                    <div>
+                        <h2 className='font-semibold ml-2 text-gray-600'>Email: support@name.com</h2>
+                        <h2 className='font-semibold ml-2 text-gray-600 mb-2'>Phone: 01XXXXXXXX</h2>
+                    </div>
                     <div className="flex gap-4 text-gray-600">
                         <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-pink-600 transition">
                             <FaFacebookF size={20} />

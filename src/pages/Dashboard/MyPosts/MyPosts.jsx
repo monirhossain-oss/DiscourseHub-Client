@@ -20,6 +20,7 @@ const MyPosts = () => {
         },
         enabled: !!user?.email,
     });
+    console.log(posts)
 
     const { data: comments = [], isLoading: loadingComments } = useQuery({
         queryKey: ['comments', activePostId],
@@ -98,7 +99,7 @@ const MyPosts = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {posts.map(post => (
+                        {posts?.map(post => (
                             <tr key={post._id} className="hover:bg-gray-50">
                                 <td className="border border-gray-300 px-4 py-2">{post.title}</td>
                                 <td className="border border-gray-300 px-4 py-2">{post.upVote} - {post.downVote}</td>

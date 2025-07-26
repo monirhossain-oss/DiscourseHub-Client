@@ -16,6 +16,7 @@ const Navbar = () => {
 
     const navigate = useNavigate();
     const { user, logOut } = useAuth();
+    // console.log(user)
 
     const { announcements, unseenCount, markAsSeen } = useAnnouncementNotification();
 
@@ -113,17 +114,17 @@ const Navbar = () => {
                         </div>
 
                         {/* User Avatar */}
-                        {user ? (
+                        {user  ? (
                             <div className="relative">
                                 <img
-                                    src={userInfo.image || "/placeholder-user.png"}
+                                    src={userInfo?.image || user?.photoURL}
                                     alt="Profile"
                                     className="w-10 h-10 rounded-full cursor-pointer"
                                     onClick={() => setDropdownOpen(!dropdownOpen)}
                                 />
                                 {dropdownOpen && (
                                     <div className="absolute right-0 mt-2 w-48 bg-base-100 rounded shadow-lg py-2 z-50">
-                                        <p className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent text-sm font-semibold">{user.displayName || "User"}</p>
+                                        <p className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent text-sm font-semibold">{user?.displayName || userInfo?.name}</p>
                                         <Link
                                             to="/dashboard"
                                             className="block px-4 py-2 text-sm hover:bg-base-200"
@@ -195,11 +196,11 @@ const Navbar = () => {
                     <ul className="space-y-2">
                         {navLinks}
                     </ul>
-                    {user ? (
+                    {user || userInfo ? (
                         <div className="flex items-center gap-3 mt-3">
-                            <img src={user.photoURL || "/placeholder-user.png"} alt="Profile" className="w-10 h-10 rounded-full" />
+                            <img src={userInfo?.image || user?.photoURL } alt="Profile" className="w-10 h-10 rounded-full" />
                             <div>
-                                <p className="font-semibold">{user.displayName || "User"}</p>
+                                <p className="font-semibold">{userInfo.name || "User"}</p>
                                 <Link
                                     to="/dashboard"
                                     className="block text-sm text-blue-500 hover:underline"

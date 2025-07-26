@@ -8,9 +8,7 @@ import useAuth from "../../hooks/useAuth";
 import Swal from "sweetalert2";
 
 const Register = () => {
-    const { register, handleSubmit, formState: { errors } } = useForm({
-        mode: "onChange" 
-    });
+    const { register: registerForm, handleSubmit, formState: { errors } } = useForm({ mode: "onChange" });
     const { createUser, googleSignIn, updateUserProfile } = useAuth();
     const [uploading, setUploading] = useState(false);
     const axiosInstance = useAxios();
@@ -21,21 +19,21 @@ const Register = () => {
     const onSubmit = async (data) => {
         setUploading(true);
         try {
-            // 1️⃣ Upload photo
+            // Upload photo
             const formData = new FormData();
             formData.append("image", data.photo[0]);
             const res = await axios.post(`https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_imagebb_api_key}`, formData);
             const photoURL = res.data.data.url;
 
-            // 2️⃣ Create user in Firebase Auth
+            // Create user in Firebase Auth
             const userCredential = await createUser(data.email, data.password);
             const user = userCredential.user;
             console.log(user)
 
-            // 3️⃣ Update user profile in Firebase Auth
+            // Update Firebase user profile
             await updateUserProfile({ displayName: data.name, photoURL });
 
-            // 4️⃣ Save user in your database
+            // Silent DB upsert
             const userInfo = {
                 name: data.name,
                 email: data.email,
@@ -46,8 +44,8 @@ const Register = () => {
                 created_At: new Date().toISOString(),
                 last_log_in: new Date().toISOString(),
             };
-
-            await axiosInstance.post("/users", userInfo);
+            axiosInstance.post("/users", userInfo)
+                .catch(err => console.error("DB Update Error:", err));
 
             Swal.fire("Success", "Registration Successful!", "success");
             navigate(from, { replace: true });
@@ -58,24 +56,22 @@ const Register = () => {
         }
     };
 
-
     const handleGoogleSignIn = () => {
         googleSignIn()
             .then(async (result) => {
                 const user = result.user;
-                const photoURL= user.photoURL;
                 const userInfo = {
                     name: user.displayName || "No Name",
                     email: user.email,
-                    image: photoURL || "",
+                    image: user.photoURL || "",
                     role: "user",
                     badge: "bronze",
                     isMember: false,
                     created_At: new Date().toISOString(),
                     last_log_in: new Date().toISOString(),
                 };
-
-                await axiosInstance.post("/users", userInfo);
+                axiosInstance.post("/users", userInfo)
+                    .catch(err => console.error("DB Update Error:", err));
 
                 Swal.fire("Success", "Google Sign-in Successful!", "success");
                 navigate(from, { replace: true });
@@ -85,55 +81,45 @@ const Register = () => {
             });
     };
 
-
     return (
         <div className="card bg-base-100 w-full max-w-sm mx-auto p-6 shadow">
             <h2 className="text-2xl font-bold text-center mb-4">Register</h2>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-3" noValidate>
                 <input
                     type="file"
-                    {...register("photo", { required: "Profile photo is required" })}
+                    {...registerForm("photo", { required: "Profile photo is required" })}
                     className="file-input w-full"
                 />
                 {errors.photo && <p className="text-red-500 text-sm">{errors.photo.message}</p>}
-
                 <input
                     type="text"
-                    {...register("name", { required: "Name is required" })}
+                    {...registerForm("name", { required: "Name is required" })}
                     placeholder="Name"
                     className={`input input-bordered w-full ${errors.name ? "input-error" : ""}`}
                 />
                 {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
-
                 <input
                     type="email"
-                    {...register("email", { required: "Email is required" })}
+                    {...registerForm("email", { required: "Email is required" })}
                     placeholder="Email"
                     className={`input input-bordered w-full ${errors.email ? "input-error" : ""}`}
                 />
                 {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
-
                 <input
                     type="password"
-                    {...register("password", {
-                        required: "Password is required",
-                        minLength: { value: 6, message: "Minimum 6 characters" }
-                    })}
+                    {...registerForm("password", { required: "Password is required", minLength: { value: 6, message: "Minimum 6 characters" } })}
                     placeholder="Password"
                     className={`input input-bordered w-full ${errors.password ? "input-error" : ""}`}
                 />
                 {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
-
                 <button type="submit" disabled={uploading} className="btn btn-primary w-full">
-                    {uploading ? "Uploading..." : "Register"}
+                    {uploading ? "Registering..." : "Register"}
                 </button>
             </form>
-
             <p className="mt-2 text-center">
                 Already have an account?{" "}
                 <Link to="/login" className="text-blue-600 hover:underline">Login</Link>
             </p>
-
             <button
                 onClick={handleGoogleSignIn}
                 className="btn btn-outline w-full mt-3 flex items-center justify-center gap-2"
