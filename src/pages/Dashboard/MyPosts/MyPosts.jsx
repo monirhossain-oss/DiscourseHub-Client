@@ -126,7 +126,7 @@ const MyPosts = () => {
     if (loadingPosts) return <p className="text-center py-8">Loading posts...</p>;
 
     return (
-        <div className="p-4 bg-gray-300 rounded-2xl">
+        <div className="py-4 px-1 bg-gray-300 rounded-2xl">
             <h1 className="text-3xl font-bold mb-6 text-center">My Posts</h1>
 
             {posts.length === 0 ? (

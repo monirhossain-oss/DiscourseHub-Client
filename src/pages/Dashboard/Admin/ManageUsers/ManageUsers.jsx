@@ -108,7 +108,7 @@ const ManageUsers = () => {
     }
 
     return (
-        <div className="p-4 bg-gray-300 rounded-2xl">
+        <div className="px-1 py-4 bg-gray-300 rounded-2xl">
             <h2 className="text-2xl font-bold mb-4 text-center">Manage Users</h2>
 
             {/* Search Field */}

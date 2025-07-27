@@ -52,11 +52,11 @@ const ReportedComments = () => {
     }
 
     return (
-        <div className="px-2 w-full py-6">
+        <div className="px-1 w-full bg-gray-300 rounded-2xl py-6">
             <h2 className="text-xl font-semibold mb-4 text-center">📢 Reported Comments</h2>
             <div className="overflow-x-auto">
                 <table className="table table-zebra w-full text-sm">
-                    <thead className="text-sm">
+                    <thead className="text-sm bg-white">
                         <tr>
                             <th className="whitespace-nowrap">Reported By</th>
                             <th className="whitespace-nowrap">Reported User</th>

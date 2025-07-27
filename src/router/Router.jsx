@@ -17,6 +17,7 @@ import PrivetRoutes from "../routes/PrivetRoutes/PrivetRoutes";
 import ManageUsers from "../pages/Dashboard/Admin/ManageUsers/ManageUsers";
 import DeshBoardLayout from "../layouts/DashboardLayout/DashboardLayout";
 import ReportedComments from "../pages/Dashboard/Admin/ReportedComments/ReportedComments";
+import AdminProfile from "../pages/Dashboard/Admin/AdminProfile/AdminProfile";
 
 export const router = createBrowserRouter([
     {
@@ -78,6 +79,10 @@ export const router = createBrowserRouter([
             {
                 path: "my-posts",
                 Component: MyPosts
+            },
+            {
+                path: 'profile',
+                Component: AdminProfile
             },
             {
                 path: 'add-announcements',

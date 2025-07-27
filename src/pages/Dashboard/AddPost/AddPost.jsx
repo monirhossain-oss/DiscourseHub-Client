@@ -88,7 +88,7 @@ const AddPost = () => {
 
     return (
         <div className="p-4">
-            <div className="bg-white p-6 rounded shadow max-w-3xl mx-auto">
+            <div className="bg-gray-300 p-6 rounded shadow max-w-3xl mx-auto">
                 <h2 className="text-2xl font-bold mb-4 text-center">Add New Post</h2>
 
                 {isLimitReached ? (
