@@ -1,12 +1,88 @@
-# React + Vite
+# 🌐 DiscourseHub - Admin Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project is a full-featured discussion platform where users can join, post, and comment. The Admin Panel provides advanced moderation and site management tools such as managing users, announcements, reports, and tags.
 
-Currently, two official plugins are available:
+## 🔐 Authentication (JWT)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- JWT implemented on login (email/password & social login)
+- use firebase accessToken and verify tha token
+- Private route protection for Dashboard
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🧑‍💼 Admin Dashboard Features
+
+### ✅ Admin Profile Page
+- Displays:
+  - Admin Name
+  - Email
+  - Image
+  - Total Posts
+  - Total Comments
+  - Total Users
+
+- 📊 Pie Chart using `Recharts` to visualize:
+  - Posts
+  - Comments
+  - Users
+
+- ➕ Add New Tags:
+  - A form allows the admin to add new tags
+  - Tags are stored in the `tags` collection in the database
+  - These tags appear in the post creation dropdown for users
+
+---
+
+### 👥 Manage Users Page
+- List all registered users with:
+  - Name, Email, Role (User/Admin)
+  - Subscription status (Membership)
+  - “Make Admin” button (Role update feature)
+
+- 🔎 Search functionality by name/email
+- 📄 Pagination: 10 users per page
+- 🗂 Backend filtered API for user data
+
+---
+
+### 📢 Make Announcements
+- Admins can publish announcements
+- Fields: Author Name, Author Image, Title, Description
+- Stored in `announcements` collection
+- Visible on the Home Page under "📢 Latest Announcements"
+
+---
+
+### 🚨 Reported Comments/Posts Page
+- Admins can view user-reported content
+- Actions available:
+  - ✅ Approve Post/Comment
+  - 🗑️ Delete Content
+  - ⚠️ Warn User (Optional Feature)
+
+---
+
+## ⚙️ Technologies Used
+
+- **React.js**
+- **React Router**
+- **Firebase Authentication**
+- **Tailwind CSS + DaisyUI**
+- **Recharts** (For Pie Chart)
+- **MongoDB + Express.js + Node.js**
+- **JWT (jsonwebtoken)** for authentication
+- **Axios** with interceptor
+
+---
+
+## 📁 Collections in MongoDB
+
+- `users` – All registered users
+- `posts` – User-generated posts
+- `comments` – Comments under posts
+- `tags` – Admin-defined tags for categorization
+- `announcements` – Announcements made by admin
+- `reports` – Reported content details
+
+---
+

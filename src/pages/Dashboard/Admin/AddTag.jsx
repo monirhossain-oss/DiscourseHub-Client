@@ -29,8 +29,8 @@ const AddTag = () => {
     };
 
     return (
-        <div className=" p-4">
-            <h2 className="text-2xl font-bold mb-4">Add New Tag</h2>
+        <div className=" p-4 bg-white mt-8 rounded-2xl shadow-2xl">
+            <h2 className="text-2xl text-center font-bold mb-4">Add New Tag</h2>
             <form onSubmit={handleAddTag} className="space-y-3 bg-white p-4 rounded shadow">
                 <input
                     type="text"
@@ -38,6 +38,7 @@ const AddTag = () => {
                     value={tagName}
                     onChange={(e) => setTagName(e.target.value)}
                     className="input input-bordered w-full"
+                    required
                 />
                 <button type="submit" className="btn btn-primary w-full">Add Tag</button>
             </form>

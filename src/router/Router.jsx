@@ -7,7 +7,6 @@ import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
 import MyProfile from "../pages/Dashboard/MyProfile/MyProfile";
 import AddPost from "../pages/Dashboard/AddPost/AddPost";
-import AddTag from "../pages/Dashboard/Admin/AddTag";
 import MyPosts from "../pages/Dashboard/MyPosts/MyPosts";
 import AddAnnouncement from "../pages/Dashboard/Admin/AddAnnouncement/AddAnnouncement";
 import Home from "../pages/Home/Home";
@@ -18,11 +17,13 @@ import ManageUsers from "../pages/Dashboard/Admin/ManageUsers/ManageUsers";
 import DeshBoardLayout from "../layouts/DashboardLayout/DashboardLayout";
 import ReportedComments from "../pages/Dashboard/Admin/ReportedComments/ReportedComments";
 import AdminProfile from "../pages/Dashboard/Admin/AdminProfile/AdminProfile";
+import ErrorPage from "../components/ErrorPage/ErrorPage";
 
 export const router = createBrowserRouter([
     {
         path: '/',
         Component: MainLayouts,
+        errorElement: <ErrorPage />,
         children: [
             {
                 index: true,
@@ -38,7 +39,7 @@ export const router = createBrowserRouter([
             },
             {
                 path: 'posts/:id',
-                Component: PostDetails
+                element: <PrivetRoutes><PostDetails></PostDetails></PrivetRoutes>
             },
             {
                 path: 'tags/:tagName',
@@ -49,6 +50,7 @@ export const router = createBrowserRouter([
     {
         path: '/',
         Component: AuthLayout,
+        errorElement: <ErrorPage />,
         children: [
             {
                 path: 'login',
@@ -63,6 +65,7 @@ export const router = createBrowserRouter([
     {
         path: 'dashboard',
         element: <PrivetRoutes><DeshBoardLayout></DeshBoardLayout></PrivetRoutes>,
+        errorElement: <ErrorPage />,
         children: [
             {
                 path: 'my-profile',
@@ -71,10 +74,6 @@ export const router = createBrowserRouter([
             {
                 path: 'add-post',
                 Component: AddPost
-            },
-            {
-                path: 'add-tags',
-                Component: AddTag
             },
             {
                 path: "my-posts",

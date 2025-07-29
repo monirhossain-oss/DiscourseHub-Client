@@ -3,6 +3,7 @@ import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 import { motion } from "framer-motion";
 import useAxiosSecure from "../../../../hooks/useAxiosSecure";
 import useAuth from "../../../../hooks/useAuth";
+import AddTag from "../AddTag";
 
 const AdminProfile = () => {
     const axiosSecure = useAxiosSecure();
@@ -105,6 +106,7 @@ const AdminProfile = () => {
                     </PieChart>
                 </div>
             </motion.div>
+            <AddTag></AddTag>
         </div>
     );
 };

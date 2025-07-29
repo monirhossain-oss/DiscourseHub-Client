@@ -92,7 +92,7 @@ export default function Login() {
             </p>
             <button
                 onClick={handleGoogleLogin}
-                className="flex items-center justify-center mt-4 gap-3 w-full py-2 border-2 border-green-500 rounded-md shadow-sm hover:bg-green-500 transition"
+                className="flex items-center bg-gray-400 cursor-pointer justify-center mt-4 gap-3 w-full py-2 border-2 border-green-500 rounded-md shadow-sm hover:bg-green-500 transition"
             >
                 <FcGoogle size={22} />
                 <span className="text-gray-800 dark:text-white font-semibold">Login with Google</span>

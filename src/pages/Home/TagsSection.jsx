@@ -17,7 +17,7 @@ const TagsSection = () => {
     if (isLoading) return <p className="text-center py-10">Loading tags...</p>;
 
     return (
-        <div className="max-w-5xl mt-8 mx-auto p-8 bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 rounded-3xl shadow-xl">
+        <div className=" mt-8 p-8 bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 rounded-3xl shadow-xl">
             {/* Section Title */}
             <h2 className="text-4xl font-extrabold mb-10 text-center text-white drop-shadow-lg">
                 Tags

@@ -13,8 +13,25 @@ import {
     Users2,
 } from 'lucide-react';
 import Footer from '../../components/Foote/Footer';
+import useAxiosSecure from '../../hooks/useAxiosSecure';
+import { useQuery } from '@tanstack/react-query';
+import useAuth from '../../hooks/useAuth';
 
 const DeshBoardLayout = () => {
+    const { user } = useAuth();
+    const axiosSecure = useAxiosSecure();
+
+    const { data: users = [] } = useQuery({
+        queryKey: ['users'],
+        queryFn: async () => {
+            const res = await axiosSecure.get('/users');
+            return res.data;
+        }
+    });
+
+    const loggedInUser = users.find(u => u.email === user?.email);
+    const role = loggedInUser?.role;
+    // console.log(role)
     return (
         <div className="flex flex-col min-h-screen">
             {/* Navbar */}
@@ -42,48 +59,50 @@ const DeshBoardLayout = () => {
 
                     <ul className="menu p-4 w-64 min-h-full bg-base-200 text-base-content space-y-2">
                         {/* USER DASHBOARD */}
-                        <li>
-                            <NavLink to="/dashboard/my-profile" className="flex items-center gap-2">
-                                <UserCircle size={18} /> My Profile
-                            </NavLink>
-                        </li>
-                        <li>
-                            <NavLink to="/dashboard/add-post" className="flex items-center gap-2">
-                                <FilePlus size={18} /> Add Post
-                            </NavLink>
-                        </li>
-                        <li>
-                            <NavLink to="/dashboard/my-posts" className="flex items-center gap-2">
-                                <ListOrdered size={18} /> My Posts
-                            </NavLink>
-                        </li>
+                        {role === 'user' ? <>
+                            <li>
+                                <NavLink to="/dashboard/my-profile" className="flex items-center gap-2">
+                                    <UserCircle size={18} /> My Profile
+                                </NavLink>
+                            </li>
+                            <li>
+                                <NavLink to="/dashboard/add-post" className="flex items-center gap-2">
+                                    <FilePlus size={18} /> Add Post
+                                </NavLink>
+                            </li>
+                            <li>
+                                <NavLink to="/dashboard/my-posts" className="flex items-center gap-2">
+                                    <ListOrdered size={18} /> My Posts
+                                </NavLink>
+                            </li>
+
+                        </> : ''}
+
 
                         {/* ADMIN DASHBOARD */}
-                        <li>
-                            <NavLink to="/dashboard/add-tags" className="flex items-center gap-2">
-                                <Tags size={18} /> Add Tags
-                            </NavLink>
-                        </li>
-                        <li>
-                            <NavLink to="/dashboard/add-announcements" className="flex items-center gap-2">
-                                <Megaphone size={18} /> Add Announcement
-                            </NavLink>
-                        </li>
-                        <li>
-                            <NavLink to="/dashboard/profile" className="flex items-center gap-2">
-                                <ShieldCheck size={18} /> Admin Profile
-                            </NavLink>
-                        </li>
-                        <li>
-                            <NavLink to="/dashboard/manage-users" className="flex items-center gap-2">
-                                <Users2 size={18} /> Manage Users
-                            </NavLink>
-                        </li>
-                        <li>
-                            <NavLink to="/dashboard/reported-comments" className="flex items-center gap-2">
-                                <AlertCircle size={18} /> Reported Comments
-                            </NavLink>
-                        </li>
+                        {role === 'admin' ? <>
+                            <li>
+                                <NavLink to="/dashboard/add-announcements" className="flex items-center gap-2">
+                                    <Megaphone size={18} /> Add Announcement
+                                </NavLink>
+                            </li>
+                            <li>
+                                <NavLink to="/dashboard/profile" className="flex items-center gap-2">
+                                    <ShieldCheck size={18} /> Admin Profile
+                                </NavLink>
+                            </li>
+                            <li>
+                                <NavLink to="/dashboard/manage-users" className="flex items-center gap-2">
+                                    <Users2 size={18} /> Manage Users
+                                </NavLink>
+                            </li>
+                            <li>
+                                <NavLink to="/dashboard/reported-comments" className="flex items-center gap-2">
+                                    <AlertCircle size={18} /> Reported Comments
+                                </NavLink>
+                            </li>
+                        </> : ''}
+
                     </ul>
                 </div>
             </div>

@@ -1,9 +1,9 @@
-// PostListSection.jsx
 import React, { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
 import PostCard from '../../components/PostCard/PostCard';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const PostListSection = () => {
     const axiosSecure = useAxiosSecure();
@@ -38,15 +38,30 @@ const PostListSection = () => {
 
     if (isLoading) return <div className="text-center py-10">Loading posts...</div>;
 
+    // Motion variants
+    const containerVariants = {
+        hidden: {},
+        visible: {
+            transition: {
+                staggerChildren: 0.1
+            }
+        }
+    };
+
+    const cardVariants = {
+        hidden: { opacity: 0, y: 50, rotateX: -90 },
+        visible: { opacity: 1, y: 0, rotateX: 0, transition: { duration: 0.6, ease: 'easeOut' } }
+    };
+
     return (
-        <section className=" bg-gray-300 rounded-2xl p-4 my-8">
+        <section className="bg-gray-300 rounded-2xl p-4 my-8">
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-2xl font-bold text-center w-full">📚 Latest Posts</h2>
             </div>
             <div className="flex justify-end mb-4">
                 <button
                     onClick={() => setSortByPopularity(!sortByPopularity)}
-                    className="bg-gradient-to-r from-green-300 via-red-500 to-white text-black  font-semibold  hover:bg-gray-300 cursor-pointer px-4 py-2 rounded hover:opacity-90 transition"
+                    className="bg-gradient-to-r from-green-300 via-red-500 to-white text-black font-semibold hover:bg-gray-300 cursor-pointer px-4 py-2 rounded hover:opacity-90 transition"
                 >
                     {sortByPopularity ? 'Sort by Newest' : 'Sort by Popularity'}
                 </button>
@@ -55,11 +70,18 @@ const PostListSection = () => {
             {currentPosts.length === 0 ? (
                 <p className="text-center text-gray-500">No posts available.</p>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <motion.div
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="visible"
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+                >
                     {currentPosts.map(post => (
-                        <PostCard key={post._id} post={post} />
+                        <motion.div key={post._id} variants={cardVariants}>
+                            <PostCard post={post} />
+                        </motion.div>
                     ))}
-                </div>
+                </motion.div>
             )}
 
             {/* Pagination */}
@@ -80,8 +102,7 @@ const PostListSection = () => {
                             <button
                                 key={pageNum}
                                 onClick={() => handlePageChange(pageNum)}
-                                className={`px-3 py-1 rounded-full border ${currentPage === pageNum ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                    } transition`}
+                                className={`px-3 py-1 rounded-full border ${currentPage === pageNum ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'} transition`}
                             >
                                 {pageNum}
                             </button>

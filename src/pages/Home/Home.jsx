@@ -4,6 +4,8 @@ import Banner from "./Banner";
 import SearchResults from "./SearchResults";
 import TagsSection from "./TagsSection";
 import PostList from "./PostList";
+import ForumStats from "./ForumStats";
+import TrendingTopics from "./TrendingTopics";
 
 const Home = () => {
     const [searchedTag, setSearchedTag] = useState('');
@@ -15,6 +17,8 @@ const Home = () => {
             <TagsSection></TagsSection>
             <AnnouncementSection></AnnouncementSection>
             <PostList></PostList>
+            <ForumStats></ForumStats>
+            <TrendingTopics></TrendingTopics>
         </div>
     );
 };

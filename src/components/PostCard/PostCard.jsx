@@ -11,23 +11,23 @@ const PostCard = ({ post }) => {
     });
 
     return (
-        <div className="bg-white rounded-xl shadow hover:shadow-lg hover:scale-105 transition duration-300 p-4 flex flex-col justify-between">
+        <div className="bg-white rounded-xl shadow hover:shadow-lg hover:scale-105 transition duration-300 p-4 flex flex-col justify-between h-full">
             {/* Author */}
             <div className="flex items-center gap-3 mb-3">
                 <img
-                    src={post.authorImage || '/placeholder-user.png'}
-                    alt={post.authorName || 'Unknown'}
+                    src={post.authorImage || "/placeholder-user.png"}
+                    alt={post.authorName || "Unknown"}
                     className="w-10 h-10 rounded-full object-cover"
                 />
                 <div>
-                    <p className="font-semibold">{post.authorName || 'Unknown Author'}</p>
+                    <p className="font-semibold">{post.authorName || "Unknown Author"}</p>
                     <p className="text-xs text-gray-500">{formattedDate}</p>
                 </div>
             </div>
 
             {/* Title */}
             <Link to={`/posts/${post._id}`}>
-                <h3 className="text-lg font-bold text-gray-800 mb-2 hover:text-blue-600 transition">
+                <h3 className="text-lg font-bold text-gray-800 mb-2 hover:text-blue-600 transition line-clamp-2">
                     {post.title}
                 </h3>
             </Link>
@@ -50,7 +50,7 @@ const PostCard = ({ post }) => {
             </div>
 
             {/* Reactions */}
-            <div className="flex items-center justify-between mt-auto">
+            <div className="flex items-center justify-between mt-auto pt-3 border-t">
                 <div className="flex items-center gap-4 text-sm text-gray-600">
                     <div className="flex items-center gap-1">
                         <FiThumbsUp /> {post.upVote || 0}

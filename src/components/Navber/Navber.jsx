@@ -12,7 +12,7 @@ const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [showNotifications, setShowNotifications] = useState(false);
-    const axiosSecure= useAxiosSecure();
+    const axiosSecure = useAxiosSecure();
 
     const navigate = useNavigate();
     const { user, logOut } = useAuth();
@@ -114,10 +114,10 @@ const Navbar = () => {
                         </div>
 
                         {/* User Avatar */}
-                        {user  ? (
+                        {user ? (
                             <div className="relative">
                                 <img
-                                    src={userInfo?.image || user?.photoURL}
+                                    src={userInfo?.image === undefined || user?.photoURL}
                                     alt="Profile"
                                     className="w-10 h-10 rounded-full cursor-pointer"
                                     onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -198,7 +198,7 @@ const Navbar = () => {
                     </ul>
                     {user || userInfo ? (
                         <div className="flex items-center gap-3 mt-3">
-                            <img src={userInfo?.image || user?.photoURL } alt="Profile" className="w-10 h-10 rounded-full" />
+                            <img src={userInfo?.image || user?.photoURL} alt="Profile" className="w-10 h-10 rounded-full" />
                             <div>
                                 <p className="font-semibold">{userInfo.name || "User"}</p>
                                 <Link
