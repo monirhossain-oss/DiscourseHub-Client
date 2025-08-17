@@ -3,6 +3,8 @@ import useAuth from '../../../hooks/useAuth';
 import useAxiosSecure from '../../../hooks/useAxiosSecure';
 import Swal from 'sweetalert2';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 const MyPosts = () => {
     const { user } = useAuth();
@@ -22,7 +24,6 @@ const MyPosts = () => {
         },
         enabled: !!user?.email,
     });
-    // console.log(user)
 
     // Get comments for selected post
     const { data: comments = [], isLoading: loadingComments } = useQuery({
@@ -54,8 +55,6 @@ const MyPosts = () => {
     // Report comment mutation
     const reportCommentMutation = useMutation({
         mutationFn: async ({ commentId, feedback }) => {
-            console.log('Inside mutationFn user:', user);
-            console.log(feedback)
             const res = await axiosSecure.patch(`/comments/${commentId}/report`, {
                 reported: true,
                 reportedByName: user.displayName,
@@ -74,9 +73,6 @@ const MyPosts = () => {
             Swal.fire('Error!', 'Failed to report comment.', 'error');
         },
     });
-
-
-
 
     const handleDeletePost = (postId) => {
         Swal.fire({
@@ -121,40 +117,58 @@ const MyPosts = () => {
         });
     };
 
-
-    if (loadingPosts) return <p className="text-center py-8">Loading posts...</p>;
+    // Skeleton loader for posts
+    if (loadingPosts) {
+        return (
+            <div className="py-4 px-1 bg-gray-300 rounded-2xl">
+                <h1 className="text-3xl font-bold mb-6 text-center">
+                    <Skeleton width={200} />
+                </h1>
+                {[...Array(3)].map((_, idx) => (
+                    <div key={idx} className="mb-4 p-4 bg-white rounded shadow">
+                        <Skeleton height={25} className="mb-2" />
+                        <Skeleton height={20} width={100} className="mb-2" />
+                        <Skeleton height={30} width={120} />
+                    </div>
+                ))}
+            </div>
+        );
+    }
 
     return (
-        <div className="py-4 px-1 bg-gray-300 rounded-2xl">
-            <h1 className="text-3xl font-bold mb-6 text-center">My Posts</h1>
+        <div className="py-4 px-1 bg-gray-100">
+            <h1 className="text-2xl text-blue-600 font-bold mb-6 text-center">My Posts</h1>
 
             {posts.length === 0 ? (
                 <p className="text-center text-gray-600">You have no posts.</p>
             ) : (
-                <table className="table-auto w-full border-collapse border border-gray-300">
-                    <thead>
-                        <tr className="bg-gray-100">
-                            <th className="border px-4 py-2">Title</th>
-                            <th className="border px-4 py-2">Vote Count</th>
-                            <th className="border px-4 py-2">Comments</th>
-                            <th className="border px-4 py-2">Delete</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {posts.map(post => (
-                            <tr key={post._id}>
-                                <td className="border px-4 py-2">{post.title}</td>
-                                <td className="border px-4 py-2">{post.upVote} - {post.downVote}</td>
-                                <td className="border px-4 py-2 text-center">
-                                    <button onClick={() => setActivePostId(post._id)} className="btn btn-info btn-sm">View Comments</button>
-                                </td>
-                                <td className="border px-4 py-2 text-center">
-                                    <button onClick={() => handleDeletePost(post._id)} className="btn btn-error btn-sm">Delete</button>
-                                </td>
+                <div className="overflow-x-auto">
+                    <table className="table-auto min-w-full border-collapse border border-gray-300">
+                        <thead>
+                            <tr className="bg-gray-100">
+                                <th className="border px-4 py-2">Title</th>
+                                <th className="border px-4 py-2">Vote Count</th>
+                                <th className="border px-4 py-2">Comments</th>
+                                <th className="border px-4 py-2">Delete</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {posts.map(post => (
+                                <tr key={post._id} className="hover:bg-gray-50 transition-colors">
+                                    <td className="border px-4 py-2">{post.title}</td>
+                                    <td className="border px-4 py-2">{post.upVote} - {post.downVote}</td>
+                                    <td className="border px-4 py-2 text-center">
+                                        <button onClick={() => setActivePostId(post._id)} className="btn btn-info btn-sm">View Comments</button>
+                                    </td>
+                                    <td className="border px-4 py-2 text-center">
+                                        <button onClick={() => handleDeletePost(post._id)} className="btn btn-error btn-sm">Delete</button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+
             )}
 
             {activePostId && (
@@ -164,7 +178,15 @@ const MyPosts = () => {
                         <button onClick={() => setActivePostId(null)} className="absolute top-4 right-4 text-gray-600 text-2xl">&times;</button>
 
                         {loadingComments ? (
-                            <p>Loading comments...</p>
+                            <div>
+                                {[...Array(5)].map((_, idx) => (
+                                    <div key={idx} className="mb-3 p-2 border rounded">
+                                        <Skeleton height={20} width={150} className="mb-1" />
+                                        <Skeleton height={15} width={`80%`} />
+                                        <Skeleton height={25} width={100} className="mt-1" />
+                                    </div>
+                                ))}
+                            </div>
                         ) : comments.length === 0 ? (
                             <p>No comments found.</p>
                         ) : (

@@ -70,7 +70,7 @@ const Navbar = () => {
                     {/* Logo */}
                     <Link to="/" className="flex items-center gap-2 font-bold text-xl">
                         <img src={logo} alt="Logo" className="w-10 rounded-full h-10" />
-                        <span className="bg-gradient-to-r hidden md:block from-purple-500 to-pink-500 bg-clip-text text-transparent font-bold">
+                        <span className="bg-gradient-to-r hidden md:block from-purple-800 to-pink-800 bg-clip-text text-transparent font-bold">
                             DiscourseHub
                         </span>
                     </Link>

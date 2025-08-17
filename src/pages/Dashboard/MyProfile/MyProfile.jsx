@@ -66,7 +66,7 @@ const MyProfile = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="bg-white p-6 rounded shadow mb-6 max-w-sm mx-auto"
+                className="bg-white hover:scale-105 transition duration-300 p-6 rounded shadow mb-6 max-w-sm mx-auto"
             >
                 <img
                     src={userInfo.photoURL || user?.photoURL || 'https://i.ibb.co/0jqHpnp/user.png'}
