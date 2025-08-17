@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
+import { motion, useAnimation } from 'framer-motion';
 
 const AnnouncementSection = () => {
     const { data: announcements = [], isLoading } = useQuery({
@@ -13,6 +14,35 @@ const AnnouncementSection = () => {
         }
     });
 
+    const controls = useAnimation();
+
+    useEffect(() => {
+        if (!isLoading) {
+            controls.start('visible');
+        }
+    }, [isLoading, controls]);
+
+    const containerVariants = {
+        hidden: {},
+        visible: {
+            transition: {
+                staggerChildren: 0.15
+            }
+        }
+    };
+
+    const cardVariants = {
+        hidden: { opacity: 0, y: 50 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
+        hover: {
+            scale: 1.05,
+            rotateX: 3,
+            rotateY: 3,
+            boxShadow: '0px 20px 30px rgba(0,0,0,0.2)',
+            transition: { duration: 0.3, ease: 'easeInOut' }
+        }
+    };
+
     if (isLoading) {
         return (
             <div className="bg-white my-8 px-4">
@@ -20,13 +50,19 @@ const AnnouncementSection = () => {
                     📢 Latest Announcements
                 </h2>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <motion.div
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="visible"
+                >
                     {[...Array(6)].map((_, index) => (
-                        <div
+                        <motion.div
                             key={index}
                             className="bg-white rounded-2xl shadow-md border border-blue-100 overflow-hidden"
+                            variants={cardVariants}
+                            whileHover="hover"
                         >
-                            {/* Skeleton for header (Image + Name + Time) */}
                             <div className="flex items-center gap-3 p-4 bg-blue-50">
                                 <Skeleton circle width={48} height={48} />
                                 <div className="flex-1">
@@ -34,28 +70,31 @@ const AnnouncementSection = () => {
                                     <Skeleton width={80} height={12} className="mt-1" />
                                 </div>
                             </div>
-
-                            {/* Skeleton for title & description */}
                             <div className="p-4">
                                 <Skeleton width={`80%`} height={20} />
                                 <Skeleton count={3} className="mt-2" />
                                 <Skeleton width={`60%`} height={12} className="mt-3" />
                             </div>
-                        </div>
+                        </motion.div>
                     ))}
-                </div>
+                </motion.div>
             </div>
         );
     }
 
     return (
         announcements.length > 0 && (
-            <div className="bg-white  my-8 px-4">
+            <div className="bg-white my-8 px-4">
                 <h2 className="text-3xl font-bold mb-8 text-center text-blue-600">
                     📢 Latest Announcements
                 </h2>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <motion.div
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate={controls}
+                >
                     {announcements.map((announcement) => {
                         const date = new Date(announcement.createdAt);
                         const formattedDate = date.toLocaleDateString('en-US', {
@@ -67,9 +106,11 @@ const AnnouncementSection = () => {
                         });
 
                         return (
-                            <div
+                            <motion.div
                                 key={announcement._id}
-                                className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 border border-blue-100 overflow-hidden"
+                                className="bg-white rounded-2xl shadow-md border border-blue-100 overflow-hidden cursor-pointer"
+                                variants={cardVariants}
+                                whileHover="hover"
                             >
                                 {/* Image, Name & Time */}
                                 <div className="flex items-center gap-3 p-4 bg-blue-50">
@@ -96,10 +137,10 @@ const AnnouncementSection = () => {
                                         📌 Posted by {formattedDate}
                                     </p>
                                 </div>
-                            </div>
+                            </motion.div>
                         );
                     })}
-                </div>
+                </motion.div>
             </div>
         )
     );
