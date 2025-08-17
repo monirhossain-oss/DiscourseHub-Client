@@ -8,7 +8,6 @@ import {
     Megaphone,
     Menu,
     ShieldCheck,
-    Tags,
     UserCircle,
     Users2,
 } from 'lucide-react';
@@ -21,7 +20,7 @@ const DeshBoardLayout = () => {
     const { user } = useAuth();
     const axiosSecure = useAxiosSecure();
 
-    const { data: users = [] } = useQuery({
+    const { data: users = [], isLoading } = useQuery({
         queryKey: ['users'],
         queryFn: async () => {
             const res = await axiosSecure.get('/users');
@@ -29,9 +28,32 @@ const DeshBoardLayout = () => {
         }
     });
 
+    if (isLoading) {
+        return (
+            <div className="flex flex-col min-h-screen">
+                <Navbar />
+                <div className="flex flex-1">
+                    {/* Sidebar Skeleton */}
+                    <div className="w-64 bg-base-200 p-4 space-y-4 animate-pulse">
+                        {[...Array(5)].map((_, idx) => (
+                            <div key={idx} className="h-6 bg-gray-300 rounded"></div>
+                        ))}
+                    </div>
+                    {/* Content Skeleton */}
+                    <div className="flex-1 p-6">
+                        <div className="h-6 w-40 bg-gray-300 rounded mb-4 animate-pulse"></div>
+                        <div className="h-40 bg-gray-200 rounded mb-4 animate-pulse"></div>
+                        <div className="h-40 bg-gray-200 rounded mb-4 animate-pulse"></div>
+                    </div>
+                </div>
+                <Footer />
+            </div>
+        );
+    }
+
     const loggedInUser = users.find(u => u.email === user?.email);
     const role = loggedInUser?.role;
-    // console.log(role)
+
     return (
         <div className="flex flex-col min-h-screen">
             {/* Navbar */}
@@ -47,7 +69,7 @@ const DeshBoardLayout = () => {
                         htmlFor="my-drawer-2"
                         className=" drawer-button lg:hidden w-fit mb-4"
                     >
-                        <Menu></Menu>
+                        <Menu />
                     </label>
 
                     <Outlet />
@@ -59,50 +81,51 @@ const DeshBoardLayout = () => {
 
                     <ul className="menu p-4 w-64 min-h-full bg-base-200 text-base-content space-y-2">
                         {/* USER DASHBOARD */}
-                        {role === 'user' ? <>
-                            <li>
-                                <NavLink to="/dashboard/my-profile" className="flex items-center gap-2">
-                                    <UserCircle size={18} /> My Profile
-                                </NavLink>
-                            </li>
-                            <li>
-                                <NavLink to="/dashboard/add-post" className="flex items-center gap-2">
-                                    <FilePlus size={18} /> Add Post
-                                </NavLink>
-                            </li>
-                            <li>
-                                <NavLink to="/dashboard/my-posts" className="flex items-center gap-2">
-                                    <ListOrdered size={18} /> My Posts
-                                </NavLink>
-                            </li>
-
-                        </> : ''}
-
+                        {role === 'user' && (
+                            <>
+                                <li>
+                                    <NavLink to="/dashboard/my-profile" className="flex items-center gap-2">
+                                        <UserCircle size={18} /> My Profile
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <NavLink to="/dashboard/add-post" className="flex items-center gap-2">
+                                        <FilePlus size={18} /> Add Post
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <NavLink to="/dashboard/my-posts" className="flex items-center gap-2">
+                                        <ListOrdered size={18} /> My Posts
+                                    </NavLink>
+                                </li>
+                            </>
+                        )}
 
                         {/* ADMIN DASHBOARD */}
-                        {role === 'admin' ? <>
-                            <li>
-                                <NavLink to="/dashboard/add-announcements" className="flex items-center gap-2">
-                                    <Megaphone size={18} /> Add Announcement
-                                </NavLink>
-                            </li>
-                            <li>
-                                <NavLink to="/dashboard/profile" className="flex items-center gap-2">
-                                    <ShieldCheck size={18} /> Admin Profile
-                                </NavLink>
-                            </li>
-                            <li>
-                                <NavLink to="/dashboard/manage-users" className="flex items-center gap-2">
-                                    <Users2 size={18} /> Manage Users
-                                </NavLink>
-                            </li>
-                            <li>
-                                <NavLink to="/dashboard/reported-comments" className="flex items-center gap-2">
-                                    <AlertCircle size={18} /> Reported Comments
-                                </NavLink>
-                            </li>
-                        </> : ''}
-
+                        {role === 'admin' && (
+                            <>
+                                <li>
+                                    <NavLink to="/dashboard/add-announcements" className="flex items-center gap-2">
+                                        <Megaphone size={18} /> Add Announcement
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <NavLink to="/dashboard/profile" className="flex items-center gap-2">
+                                        <ShieldCheck size={18} /> Admin Profile
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <NavLink to="/dashboard/manage-users" className="flex items-center gap-2">
+                                        <Users2 size={18} /> Manage Users
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <NavLink to="/dashboard/reported-comments" className="flex items-center gap-2">
+                                        <AlertCircle size={18} /> Reported Comments
+                                    </NavLink>
+                                </li>
+                            </>
+                        )}
                     </ul>
                 </div>
             </div>

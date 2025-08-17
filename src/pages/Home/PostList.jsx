@@ -113,7 +113,7 @@ const PostListSection = () => {
                     {[...Array(postsPerPage)].map((_, idx) => (
                         <div
                             key={idx}
-                            className="bg-white rounded-xl shadow-md border p-4 flex flex-col"
+                            className="bg-white rounded-xl shadow-md  p-4 flex flex-col"
                         >
                             <Skeleton height={180} className="mb-4 rounded-lg" />
                             <Skeleton width={`80%`} height={20} className="mb-2" />

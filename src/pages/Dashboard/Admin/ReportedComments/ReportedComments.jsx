@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import useAxiosSecure from '../../../../hooks/useAxiosSecure';
 import Swal from 'sweetalert2';
+import { motion } from 'framer-motion';
 
 const ReportedComments = () => {
     const axiosSecure = useAxiosSecure();
@@ -12,7 +13,6 @@ const ReportedComments = () => {
             return res.data;
         }
     });
-    console.log(reportedComments)
 
     const handleDelete = async (id) => {
         const confirm = await Swal.fire({
@@ -47,12 +47,49 @@ const ReportedComments = () => {
         }
     };
 
+    // Skeleton Loader with Framer Motion animation
     if (isLoading) {
-        return <p className="text-center py-8">Loading reported comments...</p>;
+        return (
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5 }}
+                className="px-1 w-full bg-gray-300 rounded-2xl py-6 animate-pulse"
+            >
+                <h2 className="text-xl font-semibold mb-4 text-center bg-gray-200 h-6 w-60 mx-auto rounded"></h2>
+                <div className="overflow-x-auto">
+                    <table className="table table-zebra w-full text-sm">
+                        <thead>
+                            <tr>
+                                {[...Array(6)].map((_, i) => (
+                                    <th key={i} className="h-6 bg-gray-200 rounded">&nbsp;</th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {[...Array(5)].map((_, i) => (
+                                <tr key={i}>
+                                    {[...Array(6)].map((_, j) => (
+                                        <td key={j}>
+                                            <div className="h-6 w-full bg-gray-200 rounded">&nbsp;</div>
+                                        </td>
+                                    ))}
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </motion.div>
+        );
     }
 
     return (
-        <div className="px-1 w-full bg-gray-300 rounded-2xl py-6">
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="px-1 w-full bg-gray-300 rounded-2xl py-6"
+        >
             <h2 className="text-xl font-semibold mb-4 text-center">📢 Reported Comments</h2>
             <div className="overflow-x-auto">
                 <table className="table table-zebra w-full text-sm">
@@ -76,7 +113,13 @@ const ReportedComments = () => {
                         )}
 
                         {reportedComments.map(comment => (
-                            <tr key={comment._id}>
+                            <motion.tr
+                                key={comment._id}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.3 }}
+                                className="hover:bg-gray-100 transition"
+                            >
                                 <td className="whitespace-nowrap">{comment.reportedByEmail || 'Anonymous'}</td>
                                 <td className="whitespace-nowrap">{comment.authorEmail || 'N/A'}</td>
                                 <td
@@ -105,14 +148,13 @@ const ReportedComments = () => {
                                         Reviewed
                                     </button>
                                 </td>
-                            </tr>
+                            </motion.tr>
                         ))}
                     </tbody>
                 </table>
             </div>
-        </div>
+        </motion.div>
     );
-
 };
 
 export default ReportedComments;
