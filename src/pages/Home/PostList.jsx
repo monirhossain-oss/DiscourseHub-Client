@@ -4,6 +4,8 @@ import useAxiosSecure from '../../hooks/useAxiosSecure';
 import PostCard from '../../components/PostCard/PostCard';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 const PostListSection = () => {
     const axiosSecure = useAxiosSecure();
@@ -41,20 +43,18 @@ const PostListSection = () => {
 
     // Calculate max card height
     useEffect(() => {
-        if(cardRefs.current.length) {
+        if (cardRefs.current.length) {
             const heights = cardRefs.current.map(ref => ref?.offsetHeight || 0);
             setMaxHeight(Math.max(...heights));
         }
     }, [currentPosts]);
 
-    if (isLoading) return <div className="text-center py-10">Loading posts...</div>;
-
     // Motion Variants
     const sectionVariants = {
         hidden: { opacity: 0 },
-        visible: { 
-            opacity: 1, 
-            transition: { staggerChildren: 0.15, delayChildren: 0.1 } 
+        visible: {
+            opacity: 1,
+            transition: { staggerChildren: 0.15, delayChildren: 0.1 }
         }
     };
 
@@ -107,8 +107,25 @@ const PostListSection = () => {
                 </motion.button>
             </motion.div>
 
-            {/* Posts Grid */}
-            {currentPosts.length === 0 ? (
+            {/* Posts Grid or Skeleton Loader */}
+            {isLoading ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 items-stretch">
+                    {[...Array(postsPerPage)].map((_, idx) => (
+                        <div
+                            key={idx}
+                            className="bg-white rounded-xl shadow-md border p-4 flex flex-col"
+                        >
+                            <Skeleton height={180} className="mb-4 rounded-lg" />
+                            <Skeleton width={`80%`} height={20} className="mb-2" />
+                            <Skeleton count={2} />
+                            <div className="flex justify-between items-center mt-4">
+                                <Skeleton circle width={40} height={40} />
+                                <Skeleton width={80} height={20} />
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            ) : currentPosts.length === 0 ? (
                 <motion.p className="text-center text-gray-500" variants={cardVariants}>No posts available.</motion.p>
             ) : (
                 <motion.div
@@ -131,7 +148,7 @@ const PostListSection = () => {
             )}
 
             {/* Pagination */}
-            {totalPages > 1 && (
+            {!isLoading && totalPages > 1 && (
                 <motion.div
                     className="flex justify-center items-center gap-2 mt-8"
                     variants={paginationVariants}

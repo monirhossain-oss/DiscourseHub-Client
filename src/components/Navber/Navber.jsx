@@ -7,7 +7,6 @@ import logo from '../../assets/logo.png';
 import useAnnouncementNotification from "../../hooks/useAnnouncementNotification";
 import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
-import ThemeToggle from "../ThemeToggle/ThemeToggle";
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -81,8 +80,6 @@ const Navbar = () => {
                         <ul className="flex gap-4 items-center">
                             {navLinks}
                         </ul>
-
-                        <ThemeToggle></ThemeToggle>
 
                         {/* Notification Icon */}
                         <div className="relative">
