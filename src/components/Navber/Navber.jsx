@@ -58,13 +58,13 @@ const Navbar = () => {
 
     const navLinks = (
         <>
-            <li><NavLink to="/" className="font-semibold px-4 py-1 rounded-sm" onClick={() => setIsOpen(false)}>Home</NavLink></li>
-            <li><NavLink to="/membership" className="font-semibold px-4 py-1 rounded-sm" onClick={() => setIsOpen(false)}>Membership</NavLink></li>
+            <li><NavLink to="/" className="font-semibold hover:bg-[#cb8f83] px-4 py-1 rounded-sm" onClick={() => setIsOpen(false)}>Home</NavLink></li>
+            <li><NavLink to="/membership" className="font-semibold hover:bg-[#cb8f83] px-4 py-1 rounded-sm" onClick={() => setIsOpen(false)}>Membership</NavLink></li>
         </>
     );
 
     return (
-        <nav className="bg-gradient-to-r from-white via-red-500 to-white shadow sticky top-0 z-50">
+        <nav className="bg-[#DE998E] shadow sticky top-0 z-50">
             <div className="px-2 md:px-4 lg:px-6">
                 <div className="flex justify-between h-16 items-center">
                     {/* Logo */}
@@ -119,7 +119,7 @@ const Navbar = () => {
                                 <img
                                     src={userInfo?.image === undefined || user?.photoURL}
                                     alt="Profile"
-                                    className="w-10 h-10 rounded-full cursor-pointer"
+                                    className="w-10 h-10 rounded-full border-2 border-blue-600 cursor-pointer"
                                     onClick={() => setDropdownOpen(!dropdownOpen)}
                                 />
                                 {dropdownOpen && (
