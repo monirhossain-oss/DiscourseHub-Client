@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import bannerImg from '../../assets/banner.jpg';
+import bannerImg from '../../assets/Untitled design2.png';
 
 const Banner = ({ onSearch }) => {
     const [searchTag, setSearchTag] = useState('');
@@ -12,7 +12,7 @@ const Banner = ({ onSearch }) => {
     };
 
     return (
-        <div className="relative h-[300px] md:h-[500px] rounded-b-2xl flex items-center justify-center text-center text-white overflow-hidden">
+        <div className="relative h-[250px] md:h-[300px] rounded-b-2xl flex items-center justify-center text-center text-white overflow-hidden">
            
             <div
                 className="absolute inset-0 bg-cover bg-center"
@@ -34,7 +34,7 @@ const Banner = ({ onSearch }) => {
                         placeholder="Search by tag (e.g., react)"
                         value={searchTag}
                         onChange={(e) => setSearchTag(e.target.value)}
-                        className="flex-grow px-4 py-2 text-gray-800 outline-none"
+                        className="flex-grow px-4 py-2 bg-gray-400 outline-none"
                     />
                     <button type="submit" className="bg-blue-500 cursor-pointer px-4 py-2 text-white hover:bg-blue-600">
                         Search

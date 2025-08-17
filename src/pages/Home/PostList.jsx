@@ -101,7 +101,7 @@ const PostListSection = () => {
                     onClick={() => setSortByPopularity(!sortByPopularity)}
                     variants={buttonVariants}
                     whileHover="hover"
-                    className="bg-gradient-to-r from-green-300 via-red-500 to-white text-black font-semibold hover:bg-gray-300 cursor-pointer px-4 py-2 rounded hover:opacity-90 transition"
+                    className="outline-2 outline-gray-400 text-blue-600 font-semibold hover:bg-gray-300 cursor-pointer px-4 py-2 rounded-3xl hover:opacity-90 transition"
                 >
                     {sortByPopularity ? 'Sort by Newest' : 'Sort by Popularity'}
                 </motion.button>
