@@ -59,7 +59,7 @@ const TrendingTopics = () => {
     return (
         <section
             ref={ref}
-            className=" p-8 my-16 bg-gradient-to-r from-indigo-50 via-purple-100 to-pink-50 rounded-3xl shadow-2xl"
+            className="p-8 my-16 bg-gradient-to-r from-indigo-50 via-purple-100 to-pink-50 rounded-3xl shadow-2xl"
         >
             <motion.h2
                 initial={{ opacity: 0, y: -40, scale: 0.8 }}

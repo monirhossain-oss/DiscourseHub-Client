@@ -11,7 +11,7 @@ const AnimatedNumber = ({ value }) => {
     const [count, setCount] = useState(0);
     useEffect(() => {
         let start = 0;
-        const duration = 1500;
+        const duration = 5000;
         const increment = value / (duration / 30);
         const interval = setInterval(() => {
             start += increment;
@@ -31,7 +31,7 @@ const AnimatedNumber = ({ value }) => {
 const ForumStats = () => {
     return (
         <section className="py-8 mb-8 bg-gray-50">
-            <h2 className="text-2xl text-center mb-8 font-bold bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-transparent bg-clip-text">
+            <h2 className="text-3xl text-center mb-8 font-bold bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-transparent bg-clip-text">
                 DiscourseHub Stats
             </h2>
             <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">

@@ -6,7 +6,7 @@ const AnnouncementSection = () => {
     const { data: announcements = [], isLoading } = useQuery({
         queryKey: ['announcements'],
         queryFn: async () => {
-            const res = await axios.get('http://localhost:5000/announcements');
+            const res = await axios.get('https://server-nine-eta.vercel.app/announcements');
             return res.data;
         }
     });
@@ -17,7 +17,7 @@ const AnnouncementSection = () => {
 
     return (
         announcements.length > 0 && (
-            <div className="max-w-6xl mx-auto my-8 px-4">
+            <div className="bg-white  my-8 px-4">
                 <h2 className="text-3xl font-bold mb-8 text-center text-blue-600">
                     📢 Latest Announcements
                 </h2>

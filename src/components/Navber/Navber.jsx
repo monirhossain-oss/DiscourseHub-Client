@@ -7,6 +7,7 @@ import logo from '../../assets/logo.png';
 import useAnnouncementNotification from "../../hooks/useAnnouncementNotification";
 import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
+import ThemeToggle from "../ThemeToggle/ThemeToggle";
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -65,7 +66,7 @@ const Navbar = () => {
 
     return (
         <nav className="bg-gradient-to-r from-white via-red-500 to-white shadow sticky top-0 z-50">
-            <div className="max-w-7xl px-2 md:px-4 lg:px-6 mx-auto ">
+            <div className="px-2 md:px-4 lg:px-6">
                 <div className="flex justify-between h-16 items-center">
                     {/* Logo */}
                     <Link to="/" className="flex items-center gap-2 font-bold text-xl">
@@ -80,6 +81,8 @@ const Navbar = () => {
                         <ul className="flex gap-4 items-center">
                             {navLinks}
                         </ul>
+
+                        <ThemeToggle></ThemeToggle>
 
                         {/* Notification Icon */}
                         <div className="relative">

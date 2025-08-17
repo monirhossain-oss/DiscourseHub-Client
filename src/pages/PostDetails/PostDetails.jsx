@@ -13,11 +13,10 @@ const PostDetails = () => {
     const queryClient = useQueryClient();
     const { user } = useAuth();
 
-    // State for comment modal and input
     const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
     const [commentText, setCommentText] = useState('');
 
-    // Fetch post data
+    // fetch post
     const { data: post, isLoading } = useQuery({
         queryKey: ['post', id],
         queryFn: async () => {
@@ -27,7 +26,7 @@ const PostDetails = () => {
         enabled: !!id,
     });
 
-    // Fetch comments data
+    // fetch comments
     const { data: comments = [], refetch: refetchComments } = useQuery({
         queryKey: ['comments', id],
         queryFn: async () => {
@@ -38,19 +37,19 @@ const PostDetails = () => {
         enabled: !!user && !!id,
     });
 
-    // Upvote
+    // upvote
     const upvoteMutation = useMutation({
         mutationFn: () => axiosSecure.patch(`/posts/${id}/upvote`),
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ['post', id] }),
     });
 
-    // Downvote
+    // downvote
     const downvoteMutation = useMutation({
         mutationFn: () => axiosSecure.patch(`/posts/${id}/downvote`),
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ['post', id] }),
     });
 
-    // Add comment 
+    // add comment
     const addCommentMutation = useMutation({
         mutationFn: (newComment) => axiosSecure.post('/comments', newComment),
         onSuccess: () => {
@@ -60,7 +59,6 @@ const PostDetails = () => {
         },
     });
 
-    // Handle posting a comment
     const handleAddComment = (e) => {
         e.preventDefault();
         if (!user) {
@@ -79,12 +77,41 @@ const PostDetails = () => {
         });
     };
 
-    if (isLoading) return <div className="text-center py-10">Loading post...</div>;
+    if (isLoading) {
+        return (
+            <div className="max-w-lg mx-auto bg-white rounded-lg shadow-md mt-6 mb-10 p-4 animate-pulse">
+                <div className="flex items-center gap-3 mb-4">
+                    <div className="w-12 h-12 bg-gray-300 rounded-full"></div>
+                    <div className="flex-1">
+                        <div className="w-32 h-4 bg-gray-300 rounded mb-2"></div>
+                        <div className="w-20 h-3 bg-gray-200 rounded"></div>
+                    </div>
+                </div>
+                <div className="w-3/4 h-5 bg-gray-300 rounded mb-4"></div>
+                <div className="space-y-2 mb-4">
+                    <div className="w-full h-3 bg-gray-200 rounded"></div>
+                    <div className="w-full h-3 bg-gray-200 rounded"></div>
+                    <div className="w-2/3 h-3 bg-gray-200 rounded"></div>
+                </div>
+                <div className="flex gap-2 mb-4">
+                    <div className="w-12 h-4 bg-gray-200 rounded-full"></div>
+                    <div className="w-16 h-4 bg-gray-200 rounded-full"></div>
+                </div>
+                <div className="flex justify-between border-t pt-3">
+                    <div className="flex gap-4">
+                        <div className="w-8 h-3 bg-gray-200 rounded"></div>
+                        <div className="w-8 h-3 bg-gray-200 rounded"></div>
+                    </div>
+                    <div className="w-16 h-3 bg-gray-200 rounded"></div>
+                </div>
+            </div>
+        );
+    }
+
     if (!post) return <div className="text-center py-10">Post not found</div>;
 
     const shareUrl = window.location.href;
 
-    // Facebook style time ago function
     const timeAgo = (date) => {
         const now = new Date();
         const postedDate = new Date(date);
@@ -100,9 +127,9 @@ const PostDetails = () => {
 
     return (
         <div className="max-w-lg mx-auto bg-white rounded-lg shadow-md mt-6 mb-10">
-            {/* Author Info */}
+            {/* Author */}
             <div className="flex items-center justify-between p-4 border-b">
-                <div className='flex'>
+                <div className="flex">
                     <img
                         src={post.authorImage || '/placeholder-user.png'}
                         alt={post.authorName}
@@ -113,9 +140,9 @@ const PostDetails = () => {
                         <p className="text-xs text-gray-500">{timeAgo(post.createdAt)}</p>
                     </div>
                 </div>
-                <div>
-                    <Link to='/'> <ArrowLeft  className='hover:bg-gray-400 rounded-full' /></Link>
-                </div>
+                <Link to="/">
+                    <ArrowLeft className="hover:bg-gray-200 p-1 rounded-full cursor-pointer" />
+                </Link>
             </div>
 
             {/* Title */}
@@ -126,24 +153,24 @@ const PostDetails = () => {
 
             {/* Tags */}
             <div className="px-4 mb-4">
-                {post.tags && post.tags.map((tag) => (
-                    <span
-                        key={tag}
-                        className="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full mr-2 mb-2 cursor-pointer select-none"
-                    >
-                        #{tag}
-                    </span>
-                ))}
+                {post.tags &&
+                    post.tags.map((tag) => (
+                        <span
+                            key={tag}
+                            className="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full mr-2 mb-2"
+                        >
+                            #{tag}
+                        </span>
+                    ))}
             </div>
 
-            {/* Upvote, Downvote & Share */}
+            {/* Actions */}
             <div className="flex items-center justify-between px-4 py-3 border-t border-b text-gray-700">
                 <div className="flex items-center gap-6">
                     <button
                         onClick={() => upvoteMutation.mutate()}
                         disabled={upvoteMutation.isLoading}
-                        className="flex items-center cursor-pointer gap-1 hover:text-blue-600 transition"
-                        aria-label="Like"
+                        className="flex items-center gap-1 hover:text-blue-600"
                     >
                         <FiThumbsUp size={20} /> {post.upVote || 0}
                     </button>
@@ -151,18 +178,16 @@ const PostDetails = () => {
                     <button
                         onClick={() => downvoteMutation.mutate()}
                         disabled={downvoteMutation.isLoading}
-                        className="flex items-center cursor-pointer gap-1 hover:text-red-600 transition"
-                        aria-label="Dislike"
+                        className="flex items-center gap-1 hover:text-red-600"
                     >
                         <FiThumbsDown size={20} /> {post.downVote || 0}
                     </button>
                 </div>
 
                 <div className="flex items-center gap-3">
-
                     <button
                         onClick={() => setIsCommentModalOpen(true)}
-                        className="text-sm font-medium bg-gray-300 px-2 py-1 rounded-2xl cursor-pointer text-blue-600 hover:underline"
+                        className="text-sm font-medium bg-gray-200 px-3 py-1 rounded-full text-blue-600 hover:underline"
                     >
                         Comment
                     </button>
@@ -172,14 +197,10 @@ const PostDetails = () => {
                 </div>
             </div>
 
-            {/* Comments Section */}
+            {/* Comments */}
             <div className="p-4 max-h-96 overflow-y-auto">
                 <h3 className="font-semibold mb-3 text-gray-900">Comments</h3>
-
-                {comments.length === 0 && (
-                    <p className="text-gray-500 text-sm">No comments yet. Be the first to comment!</p>
-                )}
-
+                {comments.length === 0 && <p className="text-gray-500 text-sm">No comments yet.</p>}
                 {comments.map((comment) => (
                     <div key={comment._id} className="flex items-start gap-3 mb-4">
                         <img
@@ -203,7 +224,6 @@ const PostDetails = () => {
                         <button
                             onClick={() => setIsCommentModalOpen(false)}
                             className="absolute top-2 right-2 text-gray-600 hover:text-gray-900 text-xl font-bold"
-                            aria-label="Close modal"
                         >
                             &times;
                         </button>
@@ -215,12 +235,12 @@ const PostDetails = () => {
                                     rows="4"
                                     value={commentText}
                                     onChange={(e) => setCommentText(e.target.value)}
-                                    placeholder="Write your comment here..."
+                                    placeholder="Write your comment..."
                                     required
                                 />
                                 <button
                                     type="submit"
-                                    className="btn btn-primary cursor-pointer w-full"
+                                    className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
                                     disabled={addCommentMutation.isLoading}
                                 >
                                     {addCommentMutation.isLoading ? 'Posting...' : 'Post Comment'}
@@ -228,7 +248,7 @@ const PostDetails = () => {
                             </form>
                         ) : (
                             <p className="text-red-500">
-                                You need to <a href="/login" className="underline">login</a> to comment.
+                                You need to <Link to="/login" className="underline">login</Link> to comment.
                             </p>
                         )}
                     </div>

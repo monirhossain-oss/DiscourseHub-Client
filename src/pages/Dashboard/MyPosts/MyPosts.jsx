@@ -53,14 +53,13 @@ const MyPosts = () => {
 
     // Report comment mutation
     const reportCommentMutation = useMutation({
-        mutationFn: async ({ commentId, reason, feedback }) => {
+        mutationFn: async ({ commentId, feedback }) => {
             console.log('Inside mutationFn user:', user);
             console.log(feedback)
             const res = await axiosSecure.patch(`/comments/${commentId}/report`, {
                 reported: true,
                 reportedByName: user.displayName,
                 reportedByEmail: user.email,
-                reportedReason: reason,
                 reportedAt: new Date(),
                 feedback: feedback
             });

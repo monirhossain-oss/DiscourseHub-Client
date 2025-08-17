@@ -5,9 +5,11 @@ import Footer from '../../components/Foote/Footer';
 
 const MainLayouts = () => {
     return (
-        <div className='max-w-6xl mx-auto'>
+        <div className=''>
             <Navber></Navber>
-            <Outlet></Outlet>
+            <div className='px-2 md:px-4 lg:px-6'>
+                <Outlet></Outlet>
+            </div>
             <Footer></Footer>
         </div>
     );
