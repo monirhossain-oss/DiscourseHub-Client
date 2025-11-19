@@ -18,7 +18,7 @@ const TagsSection = () => {
 
     if (isLoading) {
         return (
-            <div className="px-6 py-12">
+            <div className="px-6 py-8">
                 {/* Section Title Skeleton */}
                 <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-10 text-center text-blue-600 tracking-wide">
                     <Skeleton width={120} height={28} style={{ margin: '0 auto' }} />
@@ -48,7 +48,7 @@ const TagsSection = () => {
             </h2>
 
             {/* Tags Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid max-w-[1244px] grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {tags.map(tag => (
                     <Link
                         key={tag._id}

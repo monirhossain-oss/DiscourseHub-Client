@@ -1,19 +1,61 @@
-import React from 'react';
-import useAxiosSecure from '../../../hooks/useAxiosSecure';
-import { useForm } from 'react-hook-form';
-import { useQuery } from '@tanstack/react-query';
-import Swal from 'sweetalert2';
-import useAuth from '../../../hooks/useAuth';
-import { Link } from 'react-router';
-import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
+import React, { useState, useEffect } from "react";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import { useForm } from "react-hook-form";
+import { useQuery } from "@tanstack/react-query";
+import Swal from "sweetalert2";
+import useAuth from "../../../hooks/useAuth";
+import { Link } from "react-router";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+import axios from "axios";
+
+// Slugify
+const slugify = (str) => {
+    return str
+        .toLowerCase()
+        .trim()
+        .replace(/[^\w\s-]/g, "")
+        .replace(/[\s_-]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+};
 
 const AddPost = () => {
     const { user } = useAuth();
     const axiosSecure = useAxiosSecure();
 
-    const { data: userInfo = {}, isLoading: loadingUserInfo } = useQuery({
-        queryKey: ['userInfo', user?.email],
+    const [isPollEnabled, setIsPollEnabled] = useState(false);
+    const [status, setStatus] = useState("Draft");
+    const [uploadProgress, setUploadProgress] = useState(0);
+    const [uploadedImageURL, setUploadedImageURL] = useState("");
+
+    const {
+        register,
+        handleSubmit,
+        reset,
+        watch,
+        setValue,
+        formState: { errors },
+    } = useForm();
+
+    const titleWatch = watch("title", "");
+
+    // Auto slug
+    useEffect(() => {
+        setValue("slug", slugify(titleWatch));
+    }, [titleWatch, setValue]);
+
+    // Fetch Tags
+    const { data: tags = [], isLoading: loadingTags } = useQuery({
+        queryKey: ["tags"],
+        queryFn: async () => {
+            const res = await axiosSecure.get("/tags");
+            return res.data;
+        },
+    });
+
+    // User Info
+    const { data: userInfo = {}, isLoading: loadingUser } = useQuery({
+        queryKey: ["userInfo", user?.email],
         queryFn: async () => {
             const res = await axiosSecure.get(`/users/${user?.email}`);
             return res.data;
@@ -21,8 +63,9 @@ const AddPost = () => {
         enabled: !!user?.email,
     });
 
+    // User Posts Count
     const { data: userPosts = [] } = useQuery({
-        queryKey: ['userPosts', user?.email],
+        queryKey: ["userPosts", user?.email],
         queryFn: async () => {
             const res = await axiosSecure.get(`/posts?email=${user?.email}`);
             return res.data;
@@ -30,148 +73,282 @@ const AddPost = () => {
         enabled: !!user?.email,
     });
 
-    const postCount = userPosts.length;
+    const postLimitReached = !userInfo?.isMember && userPosts.length >= 5;
 
-    const { data: tags = [], isLoading: loadingTags } = useQuery({
-        queryKey: ['tags'],
-        queryFn: async () => {
-            const res = await axiosSecure.get('/tags');
-            return res.data;
-        }
-    });
-
-    const { register, handleSubmit, reset, formState: { errors } } = useForm();
-
-    const isLimitReached = !userInfo?.isMember && postCount >= 5;
-
+    // Submit Handler
     const onSubmit = async (data) => {
-        const postData = {
-            authorImage: user.photoURL,
-            authorName: user.displayName,
-            authorEmail: user.email,
-            title: data.title,
-            description: data.description,
-            tags: [data.tag],
-            createdAt: new Date().toISOString(),
-            upVote: 0,
-            downVote: 0,
-            commentsCount: 0
-        };
+        if (postLimitReached) {
+            Swal.fire({
+                icon: "warning",
+                title: "Post limit reached",
+            });
+            return;
+        }
+
+        // Check if file selected
+        if (!data.featuredImageFile || data.featuredImageFile.length === 0) {
+            Swal.fire({
+                icon: "error",
+                title: "Please select an image",
+            });
+            return;
+        }
 
         try {
-            await axiosSecure.post('/posts', postData);
+            // Upload Image to ImgBB
+            const formData = new FormData();
+            formData.append("image", data.featuredImageFile[0]);
+
+            const res = await axios.post(
+                `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_imagebb_api_key}`,
+                formData,
+                {
+                    onUploadProgress: (progressEvent) => {
+                        const percentCompleted = Math.round(
+                            (progressEvent.loaded * 100) / progressEvent.total
+                        );
+                        setUploadProgress(percentCompleted);
+                    },
+                }
+            );
+
+            const photoURL = res.data.data.url;
+            setUploadedImageURL(photoURL);
+
+            const pollOptions = isPollEnabled
+                ? [data.pollOption1, data.pollOption2].filter(Boolean)
+                : [];
+
+            const postData = {
+                authorImage: user.photoURL,
+                authorName: user.displayName,
+                authorEmail: user.email,
+                title: data.title,
+                slug: data.slug,
+                shortDescription: data.shortDescription,
+                fullContent: data.fullContent,
+                category: data.category,
+                subcategory: data.subcategory,
+                tags: [data.tag],
+                featuredImage: photoURL,
+                isPollEnabled,
+                pollQuestion: isPollEnabled ? data.pollQuestion : null,
+                pollOptions,
+                status,
+                scheduledPublishDate:
+                    status === "Scheduled" ? data.scheduledDate : null,
+                createdAt: new Date().toISOString(),
+                upVote: 0,
+                downVote: 0,
+                commentsCount: 0,
+            };
+
+            await axiosSecure.post("/posts", postData);
+
             Swal.fire({
-                icon: 'success',
-                title: 'Post added successfully!',
+                icon: "success",
+                title: "Post Added Successfully",
                 timer: 1500,
-                showConfirmButton: false
+                showConfirmButton: false,
             });
+
             reset();
-        } catch (error) {
-            console.error(error);
+            setStatus("Draft");
+            setIsPollEnabled(false);
+            setUploadProgress(0);
+            setUploadedImageURL("");
+        } catch (err) {
+            console.error(err);
             Swal.fire({
-                icon: 'error',
-                title: 'Failed to add post',
-                text: error.message
+                icon: "error",
+                title: "Post Failed",
             });
         }
     };
 
-    // Skeleton Loader
-    if (loadingUserInfo || loadingTags) {
+    if (loadingUser || loadingTags)
         return (
-            <div className="bg-gray-100 p-6 rounded shadow">
-                <h2 className="text-2xl font-bold mb-4 text-center">
-                    <Skeleton width={200} />
-                </h2>
-                {[...Array(5)].map((_, idx) => (
-                    <div key={idx} className="mb-4">
-                        <Skeleton height={20} className="mb-2" />
-                        <Skeleton height={40} />
-                    </div>
-                ))}
+            <div className="bg-gray-100 p-6 rounded">
+                <Skeleton height={30} />
+                <Skeleton height={40} count={6} />
             </div>
         );
-    }
 
     return (
         <div className="bg-gray-100 p-6 rounded shadow">
-            <h2 className="text-2xl text-blue-600 font-bold mb-4 text-center">Add New Post</h2>
+            <h2 className="text-2xl font-bold text-blue-600 text-center">
+                Add New Post
+            </h2>
 
-            {isLimitReached ? (
+            {postLimitReached ? (
                 <div className="text-center">
-                    <p className="text-red-600 font-semibold mb-4">
-                        You have reached the limit of 5 posts.
-                    </p>
-                    <Link to='/membership' className="btn btn-warning">Become a Member</Link>
+                    <p className="text-red-600 font-bold">Limit 5 reached</p>
+                    <Link to="/membership" className="btn btn-warning mt-2">
+                        Become a Member
+                    </Link>
                 </div>
             ) : (
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-
-                    {/* Author Info */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label className="block font-semibold text-gray-700 mb-1">Author Name</label>
-                            <input
-                                type="text"
-                                value={user?.displayName}
-                                readOnly
-                                placeholder="Author Name"
-                                className="input input-bordered w-full placeholder-black/70"
-                            />
-                        </div>
-                        <div>
-                            <label className="block font-semibold text-gray-700 mb-1">Author Email</label>
-                            <input
-                                type="text"
-                                value={user?.email}
-                                readOnly
-                                placeholder="Author Email"
-                                className="input input-bordered w-full placeholder-black/70"
-                            />
-                        </div>
-                    </div>
-
                     {/* Title */}
                     <div>
-                        <label className="block font-semibold text-gray-700 mb-1">Title</label>
+                        <label className="font-semibold">Title</label>
                         <input
                             type="text"
-                            {...register('title', { required: 'Title is required' })}
-                            placeholder="Post Title"
-                            className="input input-bordered w-full placeholder-black/70"
+                            {...register("title", { required: "Title required" })}
+                            className="input input-bordered w-full"
                         />
-                        {errors.title && <span className="text-red-500 text-sm">{errors.title.message}</span>}
                     </div>
 
-                    {/* Description */}
+                    {/* Slug */}
                     <div>
-                        <label className="block font-semibold text-gray-700 mb-1">Description</label>
+                        <label className="font-semibold">Slug</label>
+                        <input
+                            type="text"
+                            {...register("slug", { required: "Slug required" })}
+                            className="input input-bordered w-full"
+                        />
+                    </div>
+
+                    {/* Short Description */}
+                    <div>
+                        <label className="font-semibold">Short Description</label>
                         <textarea
-                            {...register('description', { required: 'Description is required' })}
-                            placeholder="Post Description"
-                            rows={4}
-                            className="textarea textarea-bordered w-full placeholder-black/70"
+                            rows={2}
+                            {...register("shortDescription", {
+                                required: "Short description required",
+                            })}
+                            className="textarea textarea-bordered w-full"
                         ></textarea>
-                        {errors.description && <span className="text-red-500 text-sm">{errors.description.message}</span>}
                     </div>
 
-                    {/* Tag */}
+                    {/* Full Content */}
                     <div>
-                        <label className="block font-semibold text-gray-700 mb-1">Select Tag</label>
+                        <label className="font-semibold">Full Content</label>
+                        <textarea
+                            rows={8}
+                            {...register("fullContent", { required: "Content required" })}
+                            className="textarea textarea-bordered w-full"
+                        ></textarea>
+                    </div>
+
+                    {/* Categories */}
+                    <div className="grid grid-cols-2 gap-4">
                         <select
-                            {...register('tag', { required: 'Please select a tag' })}
-                            className="select select-bordered w-full placeholder-black/70"
+                            {...register("category", { required: "Category required" })}
+                            className="select select-bordered"
                         >
-                            <option value="">Select a tag</option>
-                            {tags.map(tag => (
-                                <option key={tag._id} value={tag.name}>{tag.name}</option>
+                            <option value="">Select Category</option>
+                            <option>Technology</option>
+                            <option>Sports</option>
+                            <option>News</option>
+                        </select>
+
+                        <select {...register("subcategory")} className="select select-bordered">
+                            <option value="">Select Subcategory</option>
+                            <option>Gadgets</option>
+                            <option>Politics</option>
+                        </select>
+                    </div>
+
+                    {/* Tags */}
+                    <div>
+                        <label className="font-semibold">Tags</label>
+                        <select
+                            {...register("tag", { required: true })}
+                            className="select select-bordered w-full"
+                        >
+                            <option value="">Select Tag</option>
+                            {tags.map((tag) => (
+                                <option key={tag._id} value={tag.name}>
+                                    {tag.name}
+                                </option>
                             ))}
                         </select>
-                        {errors.tag && <span className="text-red-500 text-sm">{errors.tag.message}</span>}
                     </div>
 
-                    <button type="submit" className="btn btn-primary w-full">Add Post</button>
+                    {/* Image Upload */}
+                    <div>
+                        <label className="font-semibold">Featured Image</label>
+                        <input
+                            type="file"
+                            {...register("featuredImageFile", { required: true })}
+                            className="file-input file-input-bordered w-full"
+                        />
+
+                        {uploadProgress > 0 && (
+                            <div className="w-full bg-gray-300 rounded mt-2">
+                                <div
+                                    className="bg-blue-600 text-white text-center p-1 rounded"
+                                    style={{ width: `${uploadProgress}%` }}
+                                >
+                                    {uploadProgress}%
+                                </div>
+                            </div>
+                        )}
+
+                        {uploadedImageURL && (
+                            <img src={uploadedImageURL} alt="Preview" className="w-40 mt-3 rounded" />
+                        )}
+                    </div>
+
+                    {/* Poll */}
+                    <div>
+                        <input
+                            type="checkbox"
+                            checked={isPollEnabled}
+                            onChange={(e) => setIsPollEnabled(e.target.checked)}
+                            className="checkbox mr-2"
+                        />
+                        Enable Poll
+                    </div>
+
+                    {isPollEnabled && (
+                        <div className="p-4 border rounded">
+                            <input
+                                type="text"
+                                {...register("pollQuestion")}
+                                placeholder="Poll Question"
+                                className="input input-bordered w-full mb-2"
+                            />
+                            <input
+                                type="text"
+                                {...register("pollOption1")}
+                                placeholder="Option 1"
+                                className="input input-bordered w-full mb-2"
+                            />
+                            <input
+                                type="text"
+                                {...register("pollOption2")}
+                                placeholder="Option 2"
+                                className="input input-bordered w-full"
+                            />
+                        </div>
+                    )}
+
+                    {/* Status */}
+                    <div className="grid grid-cols-2 gap-4">
+                        <select
+                            value={status}
+                            onChange={(e) => setStatus(e.target.value)}
+                            className="select select-bordered"
+                        >
+                            <option>Draft</option>
+                            <option>Published</option>
+                            <option>Scheduled</option>
+                        </select>
+
+                        {status === "Scheduled" && (
+                            <input
+                                type="datetime-local"
+                                {...register("scheduledDate", { required: true })}
+                                className="input input-bordered w-full"
+                            />
+                        )}
+                    </div>
+
+                    <button type="submit" className="btn btn-primary w-full">
+                        Add Post
+                    </button>
                 </form>
             )}
         </div>

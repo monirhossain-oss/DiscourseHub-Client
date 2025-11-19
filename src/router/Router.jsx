@@ -1,6 +1,5 @@
 import { createBrowserRouter, } from "react-router";
 import MainLayouts from "../layouts/MainLayouts/MainLayouts";
-import JoinUs from "../pages/JoinUs/JoinUs";
 import Membership from "../pages/Membership/Membership";
 import AuthLayout from "../layouts/AuthLayout/AuthLayout";
 import Login from "../pages/Login/Login";
@@ -28,10 +27,6 @@ export const router = createBrowserRouter([
             {
                 index: true,
                 Component: Home
-            },
-            {
-                path: 'joinUs',
-                Component: JoinUs
             },
             {
                 path: 'membership',

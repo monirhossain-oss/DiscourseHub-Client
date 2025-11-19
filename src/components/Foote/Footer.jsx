@@ -1,59 +1,63 @@
-import React from 'react';
-import { Link } from 'react-router';
-import { FaFacebookF, FaTwitter, FaLinkedinIn, FaGithub } from 'react-icons/fa';
-import logo from '../../assets/logo.png'
+import React from "react";
+import { FaFacebookF, FaTwitter, FaLinkedinIn, FaInstagram } from "react-icons/fa";
 
 const Footer = () => {
-    const currentYear = new Date().getFullYear();
-
     return (
-        <footer className="bg-gray-100 ">
-            <div className="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-3 gap-8">
-                {/* Logo & Tagline */}
-                <div className="flex flex-col items-center md:items-start">
-                    <img src={logo} alt="DiscourseHub" className="w-16 mb-2 rounded-full" />
-                    <h2 className="text-lg font-semibold text-pink-600">DiscourseHub</h2>
-                    <p className="text-sm text-gray-600 text-center md:text-left">Empowering discussions, building community, and sharing knowledge seamlessly.</p>
+        <footer className="bg-[#310b22] text-white py-12">
+            <div className="max-w-[1200px] mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+                {/* About */}
+                <div>
+                    <h3 className="text-xl font-bold mb-4">About</h3>
+                    <p className="text-[#e36414] text-sm">
+                        DiscourseHub is a community-driven forum where tech enthusiasts
+                        share knowledge, collaborate, and grow together.
+                    </p>
                 </div>
 
-                {/* Quick Links */}
-                <div className="flex flex-col items-center md:items-start">
-                    <h3 className="text-md text-blue-500 font-semibold mb-2">Quick Links</h3>
-                    <ul className="space-y-1 text-gray-600">
-                        <li><Link to="/" className="hover:text-pink-600 transition">Home</Link></li>
-                        <li><Link to="/membership" className="hover:text-pink-600 transition">Membership</Link></li>
-                        <li><Link to="/dashboard/my-profile" className="hover:text-pink-600 transition">Dashboard</Link></li>
-                        <li><Link to="/dashboard/add-post" className="hover:text-pink-600 transition">Add Post</Link></li>
-                    </ul>
+                {/* Contact */}
+                <div>
+                    <h3 className="text-xl font-bold mb-4">Contact</h3>
+                    <p className="text-[#fb8b24] text-sm">support@discoursethub.com</p>
+                    <p className="text-[#fb8b24] text-sm mt-2">+880 123 456 789</p>
                 </div>
 
-                {/* Social Media */}
-                <div className="flex flex-col items-center md:items-start">
-                    <h3 className="text-md text-blue-500 font-semibold mb-2">Follow Us</h3>
-                    <div>
-                        <h2 className='font-semibold ml-2 text-gray-600'>Email: support@name.com</h2>
-                        <h2 className='font-semibold ml-2 text-gray-600 mb-2'>Phone: 01XXXXXXXX</h2>
+                {/* Links & Newsletter */}
+                <div className="md:col-span-2 flex flex-col md:flex-row gap-8">
+                    {/* Links */}
+                    <div className="flex-1">
+                        <h3 className="text-xl font-bold mb-4">Quick Links</h3>
+                        <ul className="text-[#9a031e] text-sm space-y-2">
+                            <li className="hover:underline cursor-pointer">Terms & Conditions</li>
+                            <li className="hover:underline cursor-pointer">Privacy Policy</li>
+                            <li className="hover:underline cursor-pointer">FAQ</li>
+                        </ul>
                     </div>
-                    <div className="flex gap-4 text-gray-600">
-                        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-pink-600 transition">
-                            <FaFacebookF size={20} />
-                        </a>
-                        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="hover:text-pink-600 transition">
-                            <FaTwitter size={20} />
-                        </a>
-                        <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="hover:text-pink-600 transition">
-                            <FaLinkedinIn size={20} />
-                        </a>
-                        <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="hover:text-pink-600 transition">
-                            <FaGithub size={20} />
-                        </a>
+
+                    {/* Newsletter & Social */}
+                    <div className="flex-1">
+                        <h3 className="text-xl font-bold mb-4">Newsletter</h3>
+                        <form className="flex flex-col sm:flex-row gap-2 w-full max-w-xs">
+                            <input
+                                type="email"
+                                placeholder="Your email"
+                                className="px-4 py-2 rounded-md outline-none text-white border border-gray-300 flex-1"
+                            />
+                            <button className="px-4 py-2 bg-[#9a031e] hover:bg-[#fb8b24] rounded-md text-white font-semibold transition duration-300">
+                                Subscribe
+                            </button>
+                        </form>
+                        <div className="flex gap-3 mt-4">
+                            <FaFacebookF className="w-6 h-6 cursor-pointer hover:text-[#fb8b24]" />
+                            <FaTwitter className="w-6 h-6 cursor-pointer hover:text-[#fb8b24]" />
+                            <FaLinkedinIn className="w-6 h-6 cursor-pointer hover:text-[#fb8b24]" />
+                            <FaInstagram className="w-6 h-6 cursor-pointer hover:text-[#fb8b24]" />
+                        </div>
                     </div>
                 </div>
             </div>
-            <div className="border-t border-gray-800 py-4">
-                <p className="text-center text-sm text-gray-800">
-                    © {currentYear} DiscourseHub. All rights reserved.
-                </p>
+
+            <div className="mt-8 text-center text-sm text-[#e36414]">
+                &copy; {new Date().getFullYear()} DiscourseHub. All rights reserved.
             </div>
         </footer>
     );

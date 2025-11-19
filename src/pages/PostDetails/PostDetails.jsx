@@ -16,7 +16,7 @@ const PostDetails = () => {
     const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
     const [commentText, setCommentText] = useState('');
 
-    // fetch post
+    // Fetch post
     const { data: post, isLoading } = useQuery({
         queryKey: ['post', id],
         queryFn: async () => {
@@ -26,7 +26,7 @@ const PostDetails = () => {
         enabled: !!id,
     });
 
-    // fetch comments
+    // Fetch comments
     const { data: comments = [], refetch: refetchComments } = useQuery({
         queryKey: ['comments', id],
         queryFn: async () => {
@@ -37,19 +37,19 @@ const PostDetails = () => {
         enabled: !!user && !!id,
     });
 
-    // upvote
+    // Upvote
     const upvoteMutation = useMutation({
         mutationFn: () => axiosSecure.patch(`/posts/${id}/upvote`),
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ['post', id] }),
     });
 
-    // downvote
+    // Downvote
     const downvoteMutation = useMutation({
         mutationFn: () => axiosSecure.patch(`/posts/${id}/downvote`),
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ['post', id] }),
     });
 
-    // add comment
+    // Add comment
     const addCommentMutation = useMutation({
         mutationFn: (newComment) => axiosSecure.post('/comments', newComment),
         onSuccess: () => {
@@ -80,30 +80,9 @@ const PostDetails = () => {
     if (isLoading) {
         return (
             <div className="max-w-lg mx-auto bg-white rounded-lg shadow-md mt-6 mb-10 p-4 animate-pulse">
-                <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 bg-gray-300 rounded-full"></div>
-                    <div className="flex-1">
-                        <div className="w-32 h-4 bg-gray-300 rounded mb-2"></div>
-                        <div className="w-20 h-3 bg-gray-200 rounded"></div>
-                    </div>
-                </div>
-                <div className="w-3/4 h-5 bg-gray-300 rounded mb-4"></div>
-                <div className="space-y-2 mb-4">
-                    <div className="w-full h-3 bg-gray-200 rounded"></div>
-                    <div className="w-full h-3 bg-gray-200 rounded"></div>
-                    <div className="w-2/3 h-3 bg-gray-200 rounded"></div>
-                </div>
-                <div className="flex gap-2 mb-4">
-                    <div className="w-12 h-4 bg-gray-200 rounded-full"></div>
-                    <div className="w-16 h-4 bg-gray-200 rounded-full"></div>
-                </div>
-                <div className="flex justify-between border-t pt-3">
-                    <div className="flex gap-4">
-                        <div className="w-8 h-3 bg-gray-200 rounded"></div>
-                        <div className="w-8 h-3 bg-gray-200 rounded"></div>
-                    </div>
-                    <div className="w-16 h-3 bg-gray-200 rounded"></div>
-                </div>
+                <div className="w-full h-64 bg-gray-300 rounded mb-4"></div>
+                <div className="w-3/4 h-6 bg-gray-300 rounded mb-2"></div>
+                <div className="w-1/2 h-4 bg-gray-300 rounded mb-4"></div>
             </div>
         );
     }
@@ -127,16 +106,25 @@ const PostDetails = () => {
 
     return (
         <div className="max-w-lg mx-auto bg-white rounded-lg shadow-md mt-6 mb-10">
+            {/* Featured Image */}
+            {post.featuredImage && (
+                <img
+                    src={post.featuredImage}
+                    alt={post.title}
+                    className="w-full h-64 object-cover rounded-t-lg"
+                />
+            )}
+
             {/* Author */}
             <div className="flex items-center justify-between p-4 border-b">
-                <div className="flex">
+                <div className="flex items-center gap-3">
                     <img
                         src={post.authorImage || '/placeholder-user.png'}
                         alt={post.authorName}
-                        className="w-12 h-12 rounded-full mr-4"
+                        className="w-12 h-12 rounded-full"
                     />
                     <div>
-                        <p className="font-semibold text-gray-900">{post.authorName || 'Unknown'}</p>
+                        <p className="font-semibold">{post.authorName}</p>
                         <p className="text-xs text-gray-500">{timeAgo(post.createdAt)}</p>
                     </div>
                 </div>
@@ -146,22 +134,24 @@ const PostDetails = () => {
             </div>
 
             {/* Title */}
-            <h1 className="px-4 pt-4 text-2xl font-bold text-gray-900">{post.title}</h1>
+            <h1 className="px-4 py-3 text-2xl font-bold">{post.title}</h1>
 
-            {/* Description */}
-            <p className="px-4 py-3 text-gray-800 whitespace-pre-wrap">{post.description}</p>
+            {/* Short Description */}
+            <p className="px-4 py-2 text-gray-700 italic">{post.shortDescription}</p>
+
+            {/* Full Content */}
+            <div className="px-4 py-2 text-gray-800 whitespace-pre-wrap">{post.fullContent}</div>
 
             {/* Tags */}
-            <div className="px-4 mb-4">
-                {post.tags &&
-                    post.tags.map((tag) => (
-                        <span
-                            key={tag}
-                            className="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full mr-2 mb-2"
-                        >
-                            #{tag}
-                        </span>
-                    ))}
+            <div className="px-4 py-2">
+                {post.tags?.map((tag) => (
+                    <span
+                        key={tag}
+                        className="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full mr-2 mb-2"
+                    >
+                        #{tag}
+                    </span>
+                ))}
             </div>
 
             {/* Actions */}
@@ -199,7 +189,7 @@ const PostDetails = () => {
 
             {/* Comments */}
             <div className="p-4 max-h-96 overflow-y-auto">
-                <h3 className="font-semibold mb-3 text-gray-900">Comments</h3>
+                <h3 className="font-semibold mb-3">Comments</h3>
                 {comments.length === 0 && <p className="text-gray-500 text-sm">No comments yet.</p>}
                 {comments.map((comment) => (
                     <div key={comment._id} className="flex items-start gap-3 mb-4">
