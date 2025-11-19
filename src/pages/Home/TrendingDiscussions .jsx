@@ -75,7 +75,7 @@ const TrendingDiscussions = () => {
                 <ul className="flex justify-center gap-2">{dots}</ul>
             </div>
         ),
-        customPaging: (i) => (
+        customPaging: () => (
             <div className="w-3 h-3 rounded-full bg-[#5f0f40]"></div>
         ),
     };

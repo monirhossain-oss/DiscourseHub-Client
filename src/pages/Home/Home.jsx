@@ -30,14 +30,9 @@ const Home = () => {
     return (
         <div className="home-page">
             {/* Banner Section */}
-            <motion.div
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.2 }}
-                variants={sectionVariants}
-            >
+            <div>
                 <Banner onSearch={setSearchedTag} />
-            </motion.div>
+            </div>
 
             {/* Search Results */}
             <motion.div
