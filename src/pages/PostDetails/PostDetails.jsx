@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
-import { Link, useParams } from 'react-router';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import useAxiosSecure from '../../hooks/useAxiosSecure';
-import { FiThumbsUp, FiThumbsDown } from 'react-icons/fi';
-import { FacebookShareButton, FacebookIcon } from 'react-share';
-import useAuth from '../../hooks/useAuth';
-import { ArrowLeft } from 'lucide-react';
+import React, { useEffect, useState } from "react";
+import { useParams, Link } from "react-router";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
+import useAuth from "../../hooks/useAuth";
+import { FiThumbsUp, FiThumbsDown } from "react-icons/fi";
+import { FacebookIcon, FacebookShareButton } from "react-share";
+import PostCard from "../../components/PostCard/PostCard";
+import Loader from "../../components/Loader/Loader";
 
 const PostDetails = () => {
     const { id } = useParams();
@@ -13,237 +14,264 @@ const PostDetails = () => {
     const queryClient = useQueryClient();
     const { user } = useAuth();
 
-    const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
-    const [commentText, setCommentText] = useState('');
+    const [isCommentBox, setIsCommentBox] = useState(false);
+    const [commentText, setCommentText] = useState("");
+    const [replyBox, setReplyBox] = useState(null);
+    const [replyText, setReplyText] = useState("");
 
-    // Fetch post
     const { data: post, isLoading } = useQuery({
-        queryKey: ['post', id],
+        queryKey: ["post", id],
         queryFn: async () => {
             const res = await axiosSecure.get(`/posts/${id}`);
             return res.data;
-        },
-        enabled: !!id,
+        }
     });
 
-    // Fetch comments
-    const { data: comments = [], refetch: refetchComments } = useQuery({
-        queryKey: ['comments', id],
+    const { data: relatedTagPosts = [] } = useQuery({
+        queryKey: ["relatedTagPosts", post?.tags],
+        enabled: !!post?.tags?.length,
         queryFn: async () => {
-            if (!user) return [];
+            const res = await axiosSecure.get(`/posts/tag/${post.tags[0]}`);
+            return res.data.filter(p => p._id !== id);
+        }
+    });
+
+    const { data: comments = [], refetch: refetchComments } = useQuery({
+        queryKey: ["comments", id],
+        queryFn: async () => {
             const res = await axiosSecure.get(`/comments/${id}`);
             return res.data;
-        },
-        enabled: !!user && !!id,
+        }
     });
 
-    // Upvote
     const upvoteMutation = useMutation({
         mutationFn: () => axiosSecure.patch(`/posts/${id}/upvote`),
-        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['post', id] }),
+        onSuccess: () => queryClient.invalidateQueries(["post", id]),
     });
 
-    // Downvote
     const downvoteMutation = useMutation({
         mutationFn: () => axiosSecure.patch(`/posts/${id}/downvote`),
-        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['post', id] }),
+        onSuccess: () => queryClient.invalidateQueries(["post", id]),
     });
 
-    // Add comment
     const addCommentMutation = useMutation({
-        mutationFn: (newComment) => axiosSecure.post('/comments', newComment),
+        mutationFn: (payload) => axiosSecure.post("/comments", payload),
         onSuccess: () => {
-            setCommentText('');
+            setCommentText("");
+            setIsCommentBox(false);
             refetchComments();
-            setIsCommentModalOpen(false);
-        },
+        }
     });
 
-    const handleAddComment = (e) => {
-        e.preventDefault();
-        if (!user) {
-            alert('Please login to comment');
-            return;
+    const replyMutation = useMutation({
+        mutationFn: (payload) => axiosSecure.post("/comments/reply", payload),
+        onSuccess: () => {
+            setReplyText("");
+            setReplyBox(null);
+            refetchComments();
         }
-        if (!commentText.trim()) return;
+    });
 
+    const commentReactionMutation = useMutation({
+        mutationFn: ({ id, type }) =>
+            axiosSecure.patch(`/comments/${id}/${type}`),
+        onSuccess: () => refetchComments(),
+    });
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }, [id])
+
+    const handleAddComment = () => {
+        if (!user) return alert("Please login");
         addCommentMutation.mutate({
-            postId: id,
+            postId: post._id,
+            text: commentText,
             authorName: user.displayName,
             authorImage: user.photoURL,
             authorEmail: user.email,
-            text: commentText.trim(),
             createdAt: new Date().toISOString(),
         });
     };
 
-    if (isLoading) {
-        return (
-            <div className="max-w-lg mx-auto bg-white rounded-lg shadow-md mt-6 mb-10 p-4 animate-pulse">
-                <div className="w-full h-64 bg-gray-300 rounded mb-4"></div>
-                <div className="w-3/4 h-6 bg-gray-300 rounded mb-2"></div>
-                <div className="w-1/2 h-4 bg-gray-300 rounded mb-4"></div>
-            </div>
-        );
-    }
+    const handleReplySubmit = (commentId) => {
+        if (!replyText.trim()) return;
+        replyMutation.mutate({
+            commentId,
+            text: replyText,
+            authorName: user.displayName,
+            authorImage: user.photoURL,
+            authorEmail: user.email,
+            createdAt: new Date().toISOString(),
+        });
+    };
 
-    if (!post) return <div className="text-center py-10">Post not found</div>;
+    if (isLoading) return <div className="text-center py-10"><Loader></Loader></div>;
+    if (!post) return <div>Post not found</div>;
 
     const shareUrl = window.location.href;
 
-    const timeAgo = (date) => {
-        const now = new Date();
-        const postedDate = new Date(date);
-        const diff = Math.floor((now - postedDate) / 1000);
-
-        if (diff < 60) return `${diff} seconds ago`;
-        if (diff < 3600) return `${Math.floor(diff / 60)} minutes ago`;
-        if (diff < 86400) return `${Math.floor(diff / 3600)} hours ago`;
-        if (diff < 2592000) return `${Math.floor(diff / 86400)} days ago`;
-
-        return postedDate.toLocaleDateString();
-    };
-
     return (
-        <div className="max-w-lg mx-auto bg-white rounded-lg shadow-md mt-6 mb-10">
-            {/* Featured Image */}
-            {post.featuredImage && (
+        <div className="max-w-7xl my-4 mx-auto px-4 md:px-6 grid grid-cols-1 lg:grid-cols-3 gap-4">
+
+        {/* LEFT CONTENT */}
+            <div className="lg:col-span-2">
                 <img
                     src={post.featuredImage}
-                    alt={post.title}
-                    className="w-full h-64 object-cover rounded-t-lg"
+                    className="w-full h-50 md:h-110"
                 />
-            )}
+                <h1 className="text-4xl font-bold text-[#5f0f40] mt-4">{post.title}</h1>
 
-            {/* Author */}
-            <div className="flex items-center justify-between p-4 border-b">
-                <div className="flex items-center gap-3">
-                    <img
-                        src={post.authorImage || '/placeholder-user.png'}
-                        alt={post.authorName}
-                        className="w-12 h-12 rounded-full"
-                    />
+                <div className="mt-3 flex items-center gap-4 flex-wrap text-[#0f4c5c]">
+                    <img src={post.authorImage} className="w-12 h-12 rounded-full border-2 border-[#e36414]" />
                     <div>
                         <p className="font-semibold">{post.authorName}</p>
-                        <p className="text-xs text-gray-500">{timeAgo(post.createdAt)}</p>
+                        <p className="text-sm">{new Date(post.createdAt).toLocaleDateString()}</p>
                     </div>
-                </div>
-                <Link to="/">
-                    <ArrowLeft className="hover:bg-gray-200 p-1 rounded-full cursor-pointer" />
-                </Link>
-            </div>
-
-            {/* Title */}
-            <h1 className="px-4 py-3 text-2xl font-bold">{post.title}</h1>
-
-            {/* Short Description */}
-            <p className="px-4 py-2 text-gray-700 italic">{post.shortDescription}</p>
-
-            {/* Full Content */}
-            <div className="px-4 py-2 text-gray-800 whitespace-pre-wrap">{post.fullContent}</div>
-
-            {/* Tags */}
-            <div className="px-4 py-2">
-                {post.tags?.map((tag) => (
-                    <span
-                        key={tag}
-                        className="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full mr-2 mb-2"
-                    >
-                        #{tag}
-                    </span>
-                ))}
-            </div>
-
-            {/* Actions */}
-            <div className="flex items-center justify-between px-4 py-3 border-t border-b text-gray-700">
-                <div className="flex items-center gap-6">
-                    <button
-                        onClick={() => upvoteMutation.mutate()}
-                        disabled={upvoteMutation.isLoading}
-                        className="flex items-center gap-1 hover:text-blue-600"
-                    >
-                        <FiThumbsUp size={20} /> {post.upVote || 0}
-                    </button>
-
-                    <button
-                        onClick={() => downvoteMutation.mutate()}
-                        disabled={downvoteMutation.isLoading}
-                        className="flex items-center gap-1 hover:text-red-600"
-                    >
-                        <FiThumbsDown size={20} /> {post.downVote || 0}
-                    </button>
+                    <span className="px-3 py-1 bg-[#e36414] text-white rounded-full">{post.category}</span>
                 </div>
 
-                <div className="flex items-center gap-3">
-                    <button
-                        onClick={() => setIsCommentModalOpen(true)}
-                        className="text-sm font-medium bg-gray-200 px-3 py-1 rounded-full text-blue-600 hover:underline"
-                    >
-                        Comment
-                    </button>
-                    <FacebookShareButton url={shareUrl} quote={post.title}>
-                        <FacebookIcon size={28} round />
-                    </FacebookShareButton>
+                <p className="mt-6 text-lg text-[#0f4c5c]">{post.shortDescription}</p>
+
+                <div className="mt-6 p-4 rounded-xl bg-[#fb8b24]/10 border border-[#fb8b24]/30">
+                    <p className="leading-7 text-[#0f4c5c] whitespace-pre-line">{post.fullContent}</p>
                 </div>
-            </div>
 
-            {/* Comments */}
-            <div className="p-4 max-h-96 overflow-y-auto">
-                <h3 className="font-semibold mb-3">Comments</h3>
-                {comments.length === 0 && <p className="text-gray-500 text-sm">No comments yet.</p>}
-                {comments.map((comment) => (
-                    <div key={comment._id} className="flex items-start gap-3 mb-4">
-                        <img
-                            src={comment.authorImage || '/placeholder-user.png'}
-                            alt={comment.authorName}
-                            className="w-8 h-8 rounded-full mt-1"
-                        />
-                        <div>
-                            <p className="font-semibold text-sm">{comment.authorName}</p>
-                            <p className="text-xs text-gray-400 mb-1">{timeAgo(comment.createdAt)}</p>
-                            <p className="text-gray-700 text-sm whitespace-pre-wrap">{comment.text}</p>
-                        </div>
-                    </div>
-                ))}
-            </div>
-
-            {/* Comment Modal */}
-            {isCommentModalOpen && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg max-w-md w-full p-6 relative">
+                <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mt-8">
+                    <div className="flex items-center gap-4 md:gap-6">
                         <button
-                            onClick={() => setIsCommentModalOpen(false)}
-                            className="absolute top-2 right-2 text-gray-600 hover:text-gray-900 text-xl font-bold"
+                            onClick={() => upvoteMutation.mutate()}
+                            className="flex items-center gap-2 px-4 py-2 bg-[#5f0f40] text-white rounded-lg hover:bg-[#9a031e]"
                         >
-                            &times;
+                            <FiThumbsUp /> {post.upVote}
                         </button>
-                        <h3 className="text-lg font-semibold mb-4">Add a Comment</h3>
-                        {user ? (
-                            <form onSubmit={handleAddComment}>
-                                <textarea
-                                    className="w-full border rounded p-2 mb-4"
-                                    rows="4"
-                                    value={commentText}
-                                    onChange={(e) => setCommentText(e.target.value)}
-                                    placeholder="Write your comment..."
-                                    required
-                                />
-                                <button
-                                    type="submit"
-                                    className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
-                                    disabled={addCommentMutation.isLoading}
-                                >
-                                    {addCommentMutation.isLoading ? 'Posting...' : 'Post Comment'}
-                                </button>
-                            </form>
-                        ) : (
-                            <p className="text-red-500">
-                                You need to <Link to="/login" className="underline">login</Link> to comment.
-                            </p>
-                        )}
+                        <button
+                            onClick={() => downvoteMutation.mutate()}
+                            className="flex items-center gap-2 px-4 py-2 bg-[#5f0f40] text-white rounded-lg hover:bg-[#9a031e]"
+                        >
+                            <FiThumbsDown /> {post.downVote}
+                        </button>
+                    </div>
+
+                    <div>
+                        <FacebookShareButton url={shareUrl}>
+                            <FacebookIcon size={40} round />
+                        </FacebookShareButton>
+                    </div>
+
+                    <h2 className="text-xl md:text-2xl font-bold text-[#5f0f40]">
+                        💬 {comments.length} Comments
+                    </h2>
+                </div>
+
+                {/* Comments Section */}
+                <div className="mt-10">
+                    <button
+                        onClick={() => setIsCommentBox(true)}
+                        className="px-4 py-2 bg-[#5f0f40] text-white rounded-lg hover:bg-[#9a031e]"
+                    >
+                        Write a Comment
+                    </button>
+
+                    {isCommentBox && (
+                        <div className="mt-4 p-4 border rounded-lg">
+                            <textarea
+                                rows={3}
+                                value={commentText}
+                                onChange={(e) => setCommentText(e.target.value)}
+                                className="w-full border p-2 rounded"
+                                placeholder="Write your comment..."
+                            />
+                            <button
+                                onClick={handleAddComment}
+                                className="mt-2 px-4 py-2 bg-[#e36414] text-white rounded-lg"
+                            >
+                                Submit
+                            </button>
+                        </div>
+                    )}
+
+                    <div className="mt-6 space-y-6">
+                        {comments.map((c) => (
+                            <div key={c._id} className="p-4 border border-[#fb8b24]/40 rounded-xl">
+                                <div className="flex items-center gap-3">
+                                    <img src={c.authorImage} className="w-10 h-10 rounded-full" />
+                                    <div>
+                                        <p className="font-bold text-[#5f0f40]">{c.authorName}</p>
+                                        <p className="text-xs text-[#0f4c5c]">{new Date(c.createdAt).toLocaleString()}</p>
+                                    </div>
+                                </div>
+                                <p className="mt-2 text-[#0f4c5c]">{c.text}</p>
+                                <div className="mt-3 flex items-center gap-4 text-sm">
+                                    <button
+                                        onClick={() => commentReactionMutation.mutate({ id: c._id, type: "like" })}
+                                        className="flex items-center gap-1 text-[#5f0f40]"
+                                    >
+                                        <FiThumbsUp /> {c.likes || 0}
+                                    </button>
+                                    <button
+                                        onClick={() => commentReactionMutation.mutate({ id: c._id, type: "dislike" })}
+                                        className="flex items-center gap-1 text-[#5f0f40]"
+                                    >
+                                        <FiThumbsDown /> {c.dislikes || 0}
+                                    </button>
+                                    <button
+                                        onClick={() => setReplyBox(c._id)}
+                                        className="text-[#e36414] font-semibold"
+                                    >
+                                        Reply
+                                    </button>
+                                </div>
+
+                                {replyBox === c._id && (
+                                    <div className="mt-3 pl-6">
+                                        <textarea
+                                            rows={2}
+                                            value={replyText}
+                                            onChange={(e) => setReplyText(e.target.value)}
+                                            className="w-full border p-2 rounded"
+                                            placeholder="Write a reply..."
+                                        />
+                                        <button
+                                            onClick={() => handleReplySubmit(c._id)}
+                                            className="mt-2 px-3 py-1 bg-[#5f0f40] text-white rounded"
+                                        >
+                                            Reply
+                                        </button>
+                                    </div>
+                                )}
+
+                                {c.replies?.length > 0 && (
+                                    <div className="mt-3 pl-8 space-y-3">
+                                        {c.replies.map((r) => (
+                                            <div key={r._id} className="border-l-4 border-[#fb8b24] pl-3">
+                                                <p className="font-semibold text-[#5f0f40]">{r.authorName}</p>
+                                                <p className="text-sm text-[#0f4c5c]">{r.text}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        ))}
                     </div>
                 </div>
-            )}
+            </div>
+
+            {/* RIGHT SIDEBAR */}
+            <div className="space-y-8">
+                <div className="p-4 border border-[#e36414]/40 bg-white shadow-sm">
+                    <h3 className="text-xl font-bold text-[#5f0f40] mb-4">🏷️ Related by Tag</h3>
+                    <div className="space-y-4">
+                        {relatedTagPosts.length === 0 && (
+                            <p className="text-[#0f4c5c] text-sm">No related posts</p>
+                        )}
+                        {relatedTagPosts.map((p) => (
+                            <PostCard key={p._id} post={p} />
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+
         </div>
     );
 };

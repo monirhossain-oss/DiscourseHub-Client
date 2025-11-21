@@ -14,6 +14,7 @@ import HowItWorks from "./HowItWorks";
 import CommunityStats from "./CommunityStats";
 import Testimonials from "./Testimonials";
 import SecurityModeration from "./securityFeatures";
+import Newsletter from "./Newsletter";
 
 const sectionVariants = {
     hidden: { opacity: 0, y: 50 },
@@ -142,6 +143,14 @@ const Home = () => {
                 variants={sectionVariants}
             >
                 <PostList />
+            </motion.div>
+            <motion.div
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.2 }}
+                variants={sectionVariants}
+            >
+                <Newsletter />
             </motion.div>
         </div>
     );

@@ -20,9 +20,9 @@ const SearchResults = ({ searchedTag }) => {
     if (!searchedTag) return null;
 
     return (
-        <div className="bg-gray-100 mt-8 p-4">
-            <h2 className="text-lg font-semibold mb-4 text-center">
-                Search Results for: "{searchedTag}"
+        <div className="bg-[#e36414]/10 mt-8 p-4 shadow-sm">
+            <h2 className="text-xl font-bold mb-4 text-center text-[#5f0f40]">
+                Search Results for: "<span className="text-[#9a031e]">{searchedTag}</span>"
             </h2>
 
             {isLoading ? (
@@ -30,7 +30,7 @@ const SearchResults = ({ searchedTag }) => {
                     {[...Array(6)].map((_, idx) => (
                         <div
                             key={idx}
-                            className="bg-white rounded shadow p-4 border border-blue-200"
+                            className="bg-white shadow p-4 border border-[#fb8b24]/30"
                         >
                             <Skeleton width={`70%`} height={20} className="mb-2" />
                             <Skeleton count={3} height={14} />
@@ -38,7 +38,7 @@ const SearchResults = ({ searchedTag }) => {
                     ))}
                 </div>
             ) : posts.length === 0 ? (
-                <p className="text-center text-gray-500">
+                <p className="text-center text-[#0f4c5c] font-medium">
                     No posts found for this tag.
                 </p>
             ) : (
@@ -47,12 +47,19 @@ const SearchResults = ({ searchedTag }) => {
                         <Link
                             key={post._id}
                             to={`/posts/${post._id}`}
-                            className="block bg-white rounded shadow hover:bg-gray-300 hover:shadow-lg p-4 border border-blue-300 transition"
+                            className="
+                                block bg-white shadow 
+                                border border-[#fb8b24]/40 
+                                p-4 transition 
+                                hover:shadow-xl hover:-translate-y-1 
+                                hover:bg-[#fb8b24]/10
+                            "
                         >
-                            <h3 className="text-blue-600 font-semibold mb-1 truncate">
+                            <h3 className="text-[#5f0f40] font-semibold mb-1 truncate hover:text-[#9a031e]">
                                 {post.title}
                             </h3>
-                            <p className="text-gray-600 text-sm line-clamp-3">
+
+                            <p className="text-[#0f4c5c] text-sm line-clamp-3">
                                 {post.description}
                             </p>
                         </Link>

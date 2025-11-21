@@ -1,5 +1,5 @@
-import React from 'react';
-import { NavLink, Outlet } from 'react-router';
+import React, { useEffect } from 'react';
+import { NavLink, Outlet, useParams } from 'react-router';
 import Navbar from '../../components/Navber/Navber';
 import {
     AlertCircle,
@@ -19,6 +19,10 @@ import useAuth from '../../hooks/useAuth';
 const DeshBoardLayout = () => {
     const { user } = useAuth();
     const axiosSecure = useAxiosSecure();
+    const { id } = useParams();
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: "smooth" })
+    }, [id]);
 
     const { data: users = [], isLoading } = useQuery({
         queryKey: ['users'],

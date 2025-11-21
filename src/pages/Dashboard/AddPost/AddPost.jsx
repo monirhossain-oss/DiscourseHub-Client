@@ -9,7 +9,6 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import axios from "axios";
 
-// Slugify
 const slugify = (str) => {
     return str
         .toLowerCase()
@@ -22,29 +21,16 @@ const slugify = (str) => {
 const AddPost = () => {
     const { user } = useAuth();
     const axiosSecure = useAxiosSecure();
-
-    const [isPollEnabled, setIsPollEnabled] = useState(false);
-    const [status, setStatus] = useState("Draft");
     const [uploadProgress, setUploadProgress] = useState(0);
     const [uploadedImageURL, setUploadedImageURL] = useState("");
 
-    const {
-        register,
-        handleSubmit,
-        reset,
-        watch,
-        setValue,
-        formState: { errors },
-    } = useForm();
-
+    const { register, handleSubmit, reset, watch, setValue, formState: { errors } } = useForm();
     const titleWatch = watch("title", "");
 
-    // Auto slug
     useEffect(() => {
         setValue("slug", slugify(titleWatch));
     }, [titleWatch, setValue]);
 
-    // Fetch Tags
     const { data: tags = [], isLoading: loadingTags } = useQuery({
         queryKey: ["tags"],
         queryFn: async () => {
@@ -53,7 +39,6 @@ const AddPost = () => {
         },
     });
 
-    // User Info
     const { data: userInfo = {}, isLoading: loadingUser } = useQuery({
         queryKey: ["userInfo", user?.email],
         queryFn: async () => {
@@ -63,7 +48,6 @@ const AddPost = () => {
         enabled: !!user?.email,
     });
 
-    // User Posts Count
     const { data: userPosts = [] } = useQuery({
         queryKey: ["userPosts", user?.email],
         queryFn: async () => {
@@ -75,7 +59,6 @@ const AddPost = () => {
 
     const postLimitReached = !userInfo?.isMember && userPosts.length >= 5;
 
-    // Submit Handler
     const onSubmit = async (data) => {
         if (postLimitReached) {
             Swal.fire({
@@ -85,7 +68,6 @@ const AddPost = () => {
             return;
         }
 
-        // Check if file selected
         if (!data.featuredImageFile || data.featuredImageFile.length === 0) {
             Swal.fire({
                 icon: "error",
@@ -95,7 +77,6 @@ const AddPost = () => {
         }
 
         try {
-            // Upload Image to ImgBB
             const formData = new FormData();
             formData.append("image", data.featuredImageFile[0]);
 
@@ -115,28 +96,16 @@ const AddPost = () => {
             const photoURL = res.data.data.url;
             setUploadedImageURL(photoURL);
 
-            const pollOptions = isPollEnabled
-                ? [data.pollOption1, data.pollOption2].filter(Boolean)
-                : [];
-
             const postData = {
                 authorImage: user.photoURL,
                 authorName: user.displayName,
                 authorEmail: user.email,
                 title: data.title,
-                slug: data.slug,
                 shortDescription: data.shortDescription,
                 fullContent: data.fullContent,
                 category: data.category,
-                subcategory: data.subcategory,
-                tags: [data.tag],
+                tags: data.tag ? [data.tag] : [],
                 featuredImage: photoURL,
-                isPollEnabled,
-                pollQuestion: isPollEnabled ? data.pollQuestion : null,
-                pollOptions,
-                status,
-                scheduledPublishDate:
-                    status === "Scheduled" ? data.scheduledDate : null,
                 createdAt: new Date().toISOString(),
                 upVote: 0,
                 downVote: 0,
@@ -153,8 +122,6 @@ const AddPost = () => {
             });
 
             reset();
-            setStatus("Draft");
-            setIsPollEnabled(false);
             setUploadProgress(0);
             setUploadedImageURL("");
         } catch (err) {
@@ -168,95 +135,84 @@ const AddPost = () => {
 
     if (loadingUser || loadingTags)
         return (
-            <div className="bg-gray-100 p-6 rounded">
+            <div className="bg-[#e36414]/10 p-6 rounded">
                 <Skeleton height={30} />
                 <Skeleton height={40} count={6} />
             </div>
         );
 
     return (
-        <div className="bg-gray-100 p-6 rounded shadow">
-            <h2 className="text-2xl font-bold text-blue-600 text-center">
+        <div className="bg-[#fb8b24]/10 p-6 rounded shadow">
+            <h2 className="text-2xl font-bold text-[#5f0f40] text-center mb-4">
                 Add New Post
             </h2>
 
             {postLimitReached ? (
                 <div className="text-center">
-                    <p className="text-red-600 font-bold">Limit 5 reached</p>
-                    <Link to="/membership" className="btn btn-warning mt-2">
+                    <p className="text-[#9a031e] font-bold">Post limit reached (5)</p>
+                    <Link
+                        to="/membership"
+                        className="px-4 py-2 mt-2 inline-block bg-[#5f0f40] text-white rounded hover:bg-[#fb8b24] transition"
+                    >
                         Become a Member
                     </Link>
                 </div>
             ) : (
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                    {/* Title */}
                     <div>
-                        <label className="font-semibold">Title</label>
+                        <label className="font-semibold text-[#0f4c5c]">Title</label>
                         <input
                             type="text"
                             {...register("title", { required: "Title required" })}
-                            className="input input-bordered w-full"
+                            className="input input-bordered w-full border-[#5f0f40] focus:border-[#fb8b24]"
                         />
+                        {errors.title && <p className="text-[#9a031e]">{errors.title.message}</p>}
                     </div>
 
-                    {/* Slug */}
                     <div>
-                        <label className="font-semibold">Slug</label>
-                        <input
-                            type="text"
-                            {...register("slug", { required: "Slug required" })}
-                            className="input input-bordered w-full"
-                        />
-                    </div>
-
-                    {/* Short Description */}
-                    <div>
-                        <label className="font-semibold">Short Description</label>
+                        <label className="font-semibold text-[#0f4c5c]">Short Description</label>
                         <textarea
-                            rows={2}
-                            {...register("shortDescription", {
-                                required: "Short description required",
-                            })}
-                            className="textarea textarea-bordered w-full"
+                            rows={1}
+                            {...register("shortDescription", { required: "Short description required" })}
+                            className="textarea textarea-bordered w-full border-[#5f0f40] focus:border-[#fb8b24]"
                         ></textarea>
+                        {errors.shortDescription && (
+                            <p className="text-[#9a031e]">{errors.shortDescription.message}</p>
+                        )}
                     </div>
 
-                    {/* Full Content */}
                     <div>
-                        <label className="font-semibold">Full Content</label>
+                        <label className="font-semibold text-[#0f4c5c]">Full Content</label>
                         <textarea
-                            rows={8}
+                            rows={3}
                             {...register("fullContent", { required: "Content required" })}
-                            className="textarea textarea-bordered w-full"
+                            className="textarea textarea-bordered w-full border-[#5f0f40] focus:border-[#fb8b24]"
                         ></textarea>
+                        {errors.fullContent && <p className="text-[#9a031e]">{errors.fullContent.message}</p>}
                     </div>
 
-                    {/* Categories */}
-                    <div className="grid grid-cols-2 gap-4">
+                    <div>
+                        <label className="font-semibold text-[#0f4c5c]">Category</label>
                         <select
                             {...register("category", { required: "Category required" })}
-                            className="select select-bordered"
+                            className="select select-bordered w-full border-[#5f0f40] focus:border-[#fb8b24]"
                         >
                             <option value="">Select Category</option>
-                            <option>Technology</option>
-                            <option>Sports</option>
-                            <option>News</option>
+                            <option>React</option>
+                            <option>Node.js</option>
+                            <option>Design</option>
+                            <option>Database</option>
+                            <option>Mobile</option>
+                            <option>Debugging</option>
+                            <option>HTML5</option>
+                            <option>CSS3</option>
                         </select>
-
-                        <select {...register("subcategory")} className="select select-bordered">
-                            <option value="">Select Subcategory</option>
-                            <option>Gadgets</option>
-                            <option>Politics</option>
-                        </select>
+                        {errors.category && <p className="text-[#9a031e]">{errors.category.message}</p>}
                     </div>
 
-                    {/* Tags */}
                     <div>
-                        <label className="font-semibold">Tags</label>
-                        <select
-                            {...register("tag", { required: true })}
-                            className="select select-bordered w-full"
-                        >
+                        <label className="font-semibold text-[#0f4c5c]">Tags</label>
+                        <select {...register("tag")} className="select select-bordered w-full border-[#5f0f40] focus:border-[#fb8b24]">
                             <option value="">Select Tag</option>
                             {tags.map((tag) => (
                                 <option key={tag._id} value={tag.name}>
@@ -266,87 +222,36 @@ const AddPost = () => {
                         </select>
                     </div>
 
-                    {/* Image Upload */}
                     <div>
-                        <label className="font-semibold">Featured Image</label>
+                        <label className="font-semibold text-[#0f4c5c]">Featured Image</label>
                         <input
                             type="file"
                             {...register("featuredImageFile", { required: true })}
-                            className="file-input file-input-bordered w-full"
+                            className="file-input file-input-bordered w-full border-[#5f0f40] focus:border-[#fb8b24]"
                         />
-
                         {uploadProgress > 0 && (
                             <div className="w-full bg-gray-300 rounded mt-2">
                                 <div
-                                    className="bg-blue-600 text-white text-center p-1 rounded"
+                                    className="bg-[#5f0f40] text-white text-center p-1 rounded"
                                     style={{ width: `${uploadProgress}%` }}
                                 >
                                     {uploadProgress}%
                                 </div>
                             </div>
                         )}
-
                         {uploadedImageURL && (
-                            <img src={uploadedImageURL} alt="Preview" className="w-40 mt-3 rounded" />
-                        )}
-                    </div>
-
-                    {/* Poll */}
-                    <div>
-                        <input
-                            type="checkbox"
-                            checked={isPollEnabled}
-                            onChange={(e) => setIsPollEnabled(e.target.checked)}
-                            className="checkbox mr-2"
-                        />
-                        Enable Poll
-                    </div>
-
-                    {isPollEnabled && (
-                        <div className="p-4 border rounded">
-                            <input
-                                type="text"
-                                {...register("pollQuestion")}
-                                placeholder="Poll Question"
-                                className="input input-bordered w-full mb-2"
-                            />
-                            <input
-                                type="text"
-                                {...register("pollOption1")}
-                                placeholder="Option 1"
-                                className="input input-bordered w-full mb-2"
-                            />
-                            <input
-                                type="text"
-                                {...register("pollOption2")}
-                                placeholder="Option 2"
-                                className="input input-bordered w-full"
-                            />
-                        </div>
-                    )}
-
-                    {/* Status */}
-                    <div className="grid grid-cols-2 gap-4">
-                        <select
-                            value={status}
-                            onChange={(e) => setStatus(e.target.value)}
-                            className="select select-bordered"
-                        >
-                            <option>Draft</option>
-                            <option>Published</option>
-                            <option>Scheduled</option>
-                        </select>
-
-                        {status === "Scheduled" && (
-                            <input
-                                type="datetime-local"
-                                {...register("scheduledDate", { required: true })}
-                                className="input input-bordered w-full"
+                            <img
+                                src={uploadedImageURL}
+                                alt="Preview"
+                                className="w-40 mt-3 rounded border border-[#5f0f40]"
                             />
                         )}
                     </div>
 
-                    <button type="submit" className="btn btn-primary w-full">
+                    <button
+                        type="submit"
+                        className="w-full py-2 bg-[#5f0f40] text-white font-bold rounded hover:bg-[#fb8b24] transition"
+                    >
                         Add Post
                     </button>
                 </form>

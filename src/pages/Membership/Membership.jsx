@@ -1,12 +1,17 @@
-import React from 'react';
 import useAuth from '../../hooks/useAuth';
 import PaymentForm from '../../components/PaymentForm/PaymentForm';
-import { Link } from 'react-router';
+import Loader from '../../components/Loader/Loader';
+import { useParams } from 'react-router';
+import { useEffect } from 'react';
 
 const MembershipPage = () => {
     const { user, loading } = useAuth();
+    const {id}=useParams();
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }, [id]);
 
-    if (loading) return <div className="text-center py-10">Loading...</div>;
+    if (loading) return <div className="text-center py-10"><Loader></Loader></div>;
 
     return (
         <div className=" mb-8 p-6 bg-gray-100 rounded-b-xl shadow">

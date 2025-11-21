@@ -87,7 +87,7 @@ const Navbar = () => {
                     {/* Logo */}
                     <Link to="/" className="flex items-center gap-2 font-bold text-xl">
                         <img src={logo} alt="Logo" className="w-10 h-10 rounded-full" />
-                        <span className="hidden md:block text-[#5f0f40] font-bold">DiscourseHub</span>
+                        <span className="hidden md:block text-[#5f0f40] text-3xl font-bold">DISCOURSE HUB</span>
                     </Link>
 
                     {/* Desktop Links */}
@@ -145,7 +145,7 @@ const Navbar = () => {
                                             {user?.displayName || userInfo?.name}
                                         </p>
                                         <Link
-                                            to="/dashboard"
+                                            to="/dashboard/my-profile"
                                             className="block px-4 py-2 text-sm hover:bg-gray-100 text-[#5f0f40]"
                                             onClick={() => setDropdownOpen(false)}
                                         >

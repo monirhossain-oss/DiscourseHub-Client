@@ -11,29 +11,29 @@ const PostCard = ({ post }) => {
     });
 
     return (
-        <div className="bg-gray-100 hover:bg-gray-200 rounded-xl shadow hover:shadow-lg hover:scale-105 transition duration-300 p-4 flex flex-col justify-between h-full">
+        <div className="bg-white shadow-md hover:shadow-xl hover:scale-105 transition-all duration-300 p-5 flex flex-col justify-between h-full border border-[#e36414]/30">
             {/* Author */}
-            <div className="flex items-center gap-3 mb-3">
+            <div className="flex items-center gap-3 mb-4">
                 <img
                     src={post.authorImage || "/placeholder-user.png"}
                     alt={post.authorName || "Unknown"}
-                    className="w-10 h-10 rounded-full object-cover"
+                    className="w-12 h-12 rounded-full object-cover border-2 border-[#9a031e]"
                 />
                 <div>
-                    <p className="font-semibold">{post.authorName || "Unknown Author"}</p>
-                    <p className="text-xs text-gray-500">{formattedDate}</p>
+                    <p className="font-semibold text-[#5f0f40]">{post.authorName || "Unknown Author"}</p>
+                    <p className="text-xs text-[#0f4c5c]">{formattedDate}</p>
                 </div>
             </div>
 
             {/* Title */}
             <Link to={`/posts/${post._id}`}>
-                <h3 className="text-lg font-bold text-gray-800 mb-2 hover:text-blue-600 transition line-clamp-2">
+                <h3 className="text-lg md:text-xl font-bold text-[#5f0f40] mb-2 hover:text-[#9a031e] transition line-clamp-2">
                     {post.title}
                 </h3>
             </Link>
 
             {/* Description */}
-            <p className="text-sm text-gray-600 line-clamp-3 mb-3 whitespace-pre-wrap">
+            <p className="text-sm text-[#0f4c5c] line-clamp-3 mb-3 whitespace-pre-wrap">
                 {post.description}
             </p>
 
@@ -42,7 +42,7 @@ const PostCard = ({ post }) => {
                 {post.tags?.map((tag, idx) => (
                     <span
                         key={idx}
-                        className="text-xs bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 px-2 py-0.5 rounded-full"
+                        className="text-xs bg-gradient-to-r from-[#fb8b24]/20 to-[#9a031e]/20 text-[#9a031e] px-2 py-0.5 rounded-full font-medium"
                     >
                         #{tag}
                     </span>
@@ -50,21 +50,21 @@ const PostCard = ({ post }) => {
             </div>
 
             {/* Reactions */}
-            <div className="flex items-center justify-between mt-auto pt-3 border-t">
-                <div className="flex items-center gap-4 text-sm text-gray-600">
-                    <div className="flex items-center gap-1">
+            <div className="flex items-center justify-between mt-auto pt-3 border-t border-[#e36414]/20">
+                <div className="flex items-center gap-4 text-sm text-[#0f4c5c]">
+                    <div className="flex items-center gap-1 hover:text-[#9a031e] transition">
                         <FiThumbsUp /> {post.upVote || 0}
                     </div>
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1 hover:text-[#9a031e] transition">
                         <FiThumbsDown /> {post.downVote || 0}
                     </div>
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1 hover:text-[#9a031e] transition">
                         <FaCommentDots /> {post.commentsCount || 0}
                     </div>
                 </div>
                 <Link
                     to={`/posts/${post._id}`}
-                    className="text-blue-600 hover:underline text-sm"
+                    className="text-[#9a031e] hover:text-[#fb8b24] hover:underline text-sm font-medium transition"
                 >
                     View Details
                 </Link>

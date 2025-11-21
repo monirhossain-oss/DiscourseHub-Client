@@ -1,35 +1,34 @@
-import React from 'react';
-import { useQuery } from '@tanstack/react-query';
-import Skeleton from 'react-loading-skeleton'
-import 'react-loading-skeleton/dist/skeleton.css'
-import useAxiosSecure from '../../hooks/useAxiosSecure';
-import { Link } from 'react-router';
+import React from "react";
+import { useQuery } from "@tanstack/react-query";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
+import { Link } from "react-router";
 
 const TagsSection = () => {
     const axiosSecure = useAxiosSecure();
 
     const { data: tags = [], isLoading } = useQuery({
-        queryKey: ['tags'],
+        queryKey: ["tags"],
         queryFn: async () => {
-            const res = await axiosSecure.get('/tags');
+            const res = await axiosSecure.get("/tags");
             return res.data;
-        }
+        },
     });
 
+    // Loading UI
     if (isLoading) {
         return (
-            <div className="px-6 py-8">
-                {/* Section Title Skeleton */}
-                <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-10 text-center text-blue-600 tracking-wide">
-                    <Skeleton width={120} height={28} style={{ margin: '0 auto' }} />
+            <div className="px-6 py-12 max-w-6xl mx-auto">
+                <h2 className="text-2xl sm:text-3xl font-bold mb-10 text-center text-[#5f0f40] tracking-wide">
+                    <Skeleton width={150} height={30} style={{ margin: "0 auto" }} />
                 </h2>
 
-                {/* Tags Grid Skeleton */}
-                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    {Array.from({ length: 8 }).map((_, i) => (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                    {Array.from({ length: 10 }).map((_, i) => (
                         <div
                             key={i}
-                            className="rounded-lg shadow-md px-4 py-2 flex justify-center items-center"
+                            className="rounded-xl shadow-md px-4 py-3 flex justify-center items-center bg-white"
                         >
                             <Skeleton width={80} height={20} />
                         </div>
@@ -39,23 +38,35 @@ const TagsSection = () => {
         );
     }
 
+    // Main UI
     return (
-        <div className="px-6 py-12 ">
-
-            {/* Section Title */}
-            <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-10 text-center text-blue-600 tracking-wide">
-                Tags
+        <div className="px-6 py-12 max-w-6xl mx-auto">
+            {/* Title */}
+            <h2 className="text-2xl sm:text-3xl font-bold mb-10 text-center text-[#5f0f40] tracking-wide">
+                Popular Tags
             </h2>
 
             {/* Tags Grid */}
-            <div className="grid max-w-[1244px] grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {tags.map(tag => (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {tags.map((tag) => (
                     <Link
                         key={tag._id}
                         to={`/tags/${encodeURIComponent(tag.name)}`}
-                        className="bg-gray-200 rounded-lg px-4 py-2 font-medium text-gray-700 text-sm 
-                       hover:bg-gray-300  transition-all duration-200 
-                       shadow-md flex justify-center items-center"
+                        className="
+                            bg-[#fb8b24]/15
+                            px-4 py-3 
+                            font-medium 
+                            text-[#0f4c5c] 
+                            text-sm 
+                            shadow-sm 
+                            flex justify-center items-center 
+                            hover:bg-[#ba0d2d] 
+                            hover:text-white 
+                            hover:shadow-lg 
+                            hover:transition-all hover:duration-300 
+                            active:scale-95
+                            border border-[#e36414]/30
+                        "
                     >
                         {tag.name}
                     </Link>
