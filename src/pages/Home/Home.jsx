@@ -15,6 +15,7 @@ import CommunityStats from "./CommunityStats";
 import Testimonials from "./Testimonials";
 import SecurityModeration from "./securityFeatures";
 import Newsletter from "./Newsletter";
+import About from "./About";
 
 const sectionVariants = {
     hidden: { opacity: 0, y: 50 },
@@ -54,7 +55,6 @@ const Home = () => {
             >
                 <Features />
             </motion.div>
-
             {/* Popular Categories */}
             <motion.div
                 initial="hidden"

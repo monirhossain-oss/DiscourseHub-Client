@@ -67,6 +67,30 @@ const Navbar = () => {
             </li>
             <li>
                 <NavLink
+                    to="/about"
+                    className={({ isActive }) =>
+                        `font-semibold px-4 py-1 rounded-sm transition-colors duration-200 ${isActive ? "text-[#fb8b24] underline" : "text-[#5f0f40] hover:text-[#fb8b24] hover:underline"
+                        }`
+                    }
+                    onClick={() => setIsOpen(false)}
+                >
+                    About
+                </NavLink>
+            </li>
+            <li>
+                <NavLink
+                    to="/blog"
+                    className={({ isActive }) =>
+                        `font-semibold px-4 py-1 rounded-sm transition-colors duration-200 ${isActive ? "text-[#fb8b24] underline" : "text-[#5f0f40] hover:text-[#fb8b24] hover:underline"
+                        }`
+                    }
+                    onClick={() => setIsOpen(false)}
+                >
+                    Blog
+                </NavLink>
+            </li>
+            <li>
+                <NavLink
                     to="/membership"
                     className={({ isActive }) =>
                         `font-semibold px-4 py-1 rounded-sm transition-colors duration-200 ${isActive ? "text-[#fb8b24] underline" : "text-[#5f0f40] hover:text-[#fb8b24] hover:underline"
@@ -86,8 +110,7 @@ const Navbar = () => {
                 <div className="flex justify-between h-16 items-center">
                     {/* Logo */}
                     <Link to="/" className="flex items-center gap-2 font-bold text-xl">
-                        <img src={logo} alt="Logo" className="w-10 h-10 rounded-full" />
-                        <span className="hidden md:block text-[#5f0f40] text-3xl font-bold">DISCOURSE HUB</span>
+                        <img src={logo} alt="Logo" className="w-full h-10 rounded-full" />
                     </Link>
 
                     {/* Desktop Links */}

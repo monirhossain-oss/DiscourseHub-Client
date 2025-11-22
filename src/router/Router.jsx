@@ -17,6 +17,8 @@ import DeshBoardLayout from "../layouts/DashboardLayout/DashboardLayout";
 import ReportedComments from "../pages/Dashboard/Admin/ReportedComments/ReportedComments";
 import AdminProfile from "../pages/Dashboard/Admin/AdminProfile/AdminProfile";
 import ErrorPage from "../components/ErrorPage/ErrorPage";
+import About from "../pages/Home/About";
+import Blog from "../pages/Blogs/Blogs";
 
 export const router = createBrowserRouter([
     {
@@ -29,8 +31,16 @@ export const router = createBrowserRouter([
                 Component: Home
             },
             {
+                path: 'about',
+                Component:About
+            },
+            {
                 path: 'membership',
                 element: <PrivetRoutes><Membership></Membership></PrivetRoutes>
+            },
+            {
+                path:'blog',
+                Component:Blog
             },
             {
                 path: 'posts/:id',

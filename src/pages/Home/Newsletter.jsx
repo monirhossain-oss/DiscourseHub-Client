@@ -12,7 +12,7 @@ const Newsletter = () => {
     };
 
     return (
-        <section className="py-16 px-4 bg-[#e36414]/10">
+        <section className="py-8 px-4 bg-[#e36414]/10">
             <div className="max-w-3xl mx-auto text-center text-[#5f0f40]">
                 <h2 className="text-4xl font-extrabold mb-4">Stay Updated!</h2>
                 <p className="text-lg mb-8">
