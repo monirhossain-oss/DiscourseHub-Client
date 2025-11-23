@@ -14,7 +14,7 @@ const MembershipPage = () => {
     if (loading) return <div className="text-center py-10"><Loader></Loader></div>;
 
     return (
-        <div className=" mb-8 p-6 bg-gray-100 rounded-b-xl shadow">
+        <div className="mt-14 my-8 p-6 bg-gray-100 rounded-b-xl shadow">
             <h2 className="text-3xl font-bold mb-6 text-center text-yellow-700">Become a Gold Member 🥇</h2>
 
             <p className="mb-2 text-center text-gray-700">

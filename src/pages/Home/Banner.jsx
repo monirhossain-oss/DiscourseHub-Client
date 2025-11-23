@@ -61,10 +61,10 @@ const Banner = ({ onSearch }) => {
     };
 
     return (
-        <div className="relative w-full h-[300px] md:h-[400px] lg:h-[400px] overflow-hidden shadow-lg">
+        <div className="relative w-full h-[300px] md:h-[450px] lg:h-[500px] overflow-hidden shadow-lg">
             <Slider {...settings} className="h-full">
                 {slides.map((slide, idx) => (
-                    <div key={idx} className="relative w-full h-[300px] md:h-[400px] lg:h-[400px]">
+                    <div key={idx} className="relative w-full h-[300px] md:h-[450px] lg:h-[500px]">
                         {/* Background Image */}
                         <div
                             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -85,7 +85,7 @@ const Banner = ({ onSearch }) => {
 
                             <div className="flex flex-wrap gap-4 justify-center mb-6">
                                 <Link
-                                    to="/join"
+                                    to="/blog"
                                     className="px-6 py-2 bg-[#9a031e] hover:bg-[#fb8b24] text-white font-semibold rounded-full transition duration-300 text-center"
                                 >
                                     Join Now

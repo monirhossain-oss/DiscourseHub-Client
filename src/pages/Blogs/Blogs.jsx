@@ -79,8 +79,7 @@ const Blog = () => {
 
     return (
         <div>
-            {/* ---------------- TITLE & DESCRIPTION ---------------- */}
-            <div className="py-6 px-4">
+            <div className="py-6 mt-14 px-4">
                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-center text-[#5f0f40]">
                     Explore the Latest Discussions & Insights
                 </h2>

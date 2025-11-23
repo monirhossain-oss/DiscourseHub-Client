@@ -111,7 +111,7 @@ const PostDetails = () => {
     const shareUrl = window.location.href;
 
     return (
-        <div className="max-w-7xl my-4 mx-auto px-4 md:px-6 grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="max-w-7xl my-16 mx-auto px-4 md:px-6 grid grid-cols-1 lg:grid-cols-3 gap-4">
 
         {/* LEFT CONTENT */}
             <div className="lg:col-span-2">

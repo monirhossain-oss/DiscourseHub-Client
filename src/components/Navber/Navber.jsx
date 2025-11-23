@@ -1,5 +1,5 @@
-import { Link, NavLink, useNavigate } from "react-router";
-import { useState } from "react";
+import { Link, NavLink, useNavigate, useLocation } from "react-router";
+import { useState, useEffect } from "react";
 import { FiMenu, FiX, FiBell } from "react-icons/fi";
 import useAuth from "../../hooks/useAuth";
 import Swal from "sweetalert2";
@@ -12,8 +12,13 @@ const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [showNotifications, setShowNotifications] = useState(false);
+    const [isScrolled, setIsScrolled] = useState(false);
+
     const axiosSecure = useAxiosSecure();
     const navigate = useNavigate();
+    const location = useLocation();
+    const isHome = location.pathname === "/";
+
     const { user, logOut } = useAuth();
     const { announcements, unseenCount, markAsSeen } = useAnnouncementNotification();
 
@@ -25,6 +30,21 @@ const Navbar = () => {
         },
         enabled: !!user?.email
     });
+
+    useEffect(() => {
+        if (!isHome) {
+            setIsScrolled(true); // other pages always white
+            return;
+        }
+
+        const handleScroll = () => {
+            if (window.scrollY > 50) setIsScrolled(true);
+            else setIsScrolled(false);
+        };
+
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, [isHome]);
 
     const handleLogout = () => {
         logOut()
@@ -57,7 +77,11 @@ const Navbar = () => {
                 <NavLink
                     to="/"
                     className={({ isActive }) =>
-                        `font-semibold px-4 py-1 rounded-sm transition-colors duration-200 ${isActive ? "text-[#fb8b24] underline" : "text-[#5f0f40] hover:text-[#fb8b24] hover:underline"
+                        `font-semibold px-4 py-1 rounded-sm transition-colors duration-200 ${isHome && !isScrolled
+                            ? "text-white"
+                            : isActive
+                                ? "text-[#fb8b24] underline"
+                                : "text-[#5f0f40] hover:text-[#fb8b24] hover:underline"
                         }`
                     }
                     onClick={() => setIsOpen(false)}
@@ -67,9 +91,13 @@ const Navbar = () => {
             </li>
             <li>
                 <NavLink
-                    to="/about"
+                    to="/about" // absolute path fixed
                     className={({ isActive }) =>
-                        `font-semibold px-4 py-1 rounded-sm transition-colors duration-200 ${isActive ? "text-[#fb8b24] underline" : "text-[#5f0f40] hover:text-[#fb8b24] hover:underline"
+                        `font-semibold px-4 py-1 rounded-sm transition-colors duration-200 ${isHome && !isScrolled
+                            ? "text-white"
+                            : isActive
+                                ? "text-[#fb8b24] underline"
+                                : "text-[#5f0f40] hover:text-[#fb8b24] hover:underline"
                         }`
                     }
                     onClick={() => setIsOpen(false)}
@@ -79,9 +107,13 @@ const Navbar = () => {
             </li>
             <li>
                 <NavLink
-                    to="/blog"
+                    to="/blog" // absolute path fixed
                     className={({ isActive }) =>
-                        `font-semibold px-4 py-1 rounded-sm transition-colors duration-200 ${isActive ? "text-[#fb8b24] underline" : "text-[#5f0f40] hover:text-[#fb8b24] hover:underline"
+                        `font-semibold px-4 py-1 rounded-sm transition-colors duration-200 ${isHome && !isScrolled
+                            ? "text-white"
+                            : isActive
+                                ? "text-[#fb8b24] underline"
+                                : "text-[#5f0f40] hover:text-[#fb8b24] hover:underline"
                         }`
                     }
                     onClick={() => setIsOpen(false)}
@@ -91,9 +123,13 @@ const Navbar = () => {
             </li>
             <li>
                 <NavLink
-                    to="/membership"
+                    to="/membership" // absolute path fixed
                     className={({ isActive }) =>
-                        `font-semibold px-4 py-1 rounded-sm transition-colors duration-200 ${isActive ? "text-[#fb8b24] underline" : "text-[#5f0f40] hover:text-[#fb8b24] hover:underline"
+                        `font-semibold px-4 py-1 rounded-sm transition-colors duration-200 ${isHome && !isScrolled
+                            ? "text-white"
+                            : isActive
+                                ? "text-[#fb8b24] underline"
+                                : "text-[#5f0f40] hover:text-[#fb8b24] hover:underline"
                         }`
                     }
                     onClick={() => setIsOpen(false)}
@@ -104,8 +140,12 @@ const Navbar = () => {
         </>
     );
 
+
+
     return (
-        <nav className="bg-white shadow sticky top-0 z-50">
+        <nav
+            className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isHome ? (isScrolled ? "bg-white" : "bg-transparent") : "bg-white"
+                }`}>
             <div className="px-4 md:px-6 lg:px-8">
                 <div className="flex justify-between h-16 items-center">
                     {/* Logo */}
@@ -120,12 +160,15 @@ const Navbar = () => {
                         {/* Notifications */}
                         <div className="relative">
                             <button
-                                className="relative text-[#5f0f40] hover:text-[#fb8b24] transition-colors"
+                                className={`relative transition-colors ${isHome && !isScrolled ? "text-white hover:text-gray-200" : "text-[#5f0f40] hover:text-[#fb8b24]"
+                                    }`}
                                 onClick={handleNotificationClick}
                             >
                                 <FiBell size={22} />
                                 {unseenCount > 0 && (
-                                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                                    <span
+                                        className={`absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center rounded-full text-xs 
+                                        ${isHome && !isScrolled ? "bg-red-400 text-white" : "bg-red-500 text-white"}`}>
                                         {unseenCount}
                                     </span>
                                 )}
@@ -152,6 +195,7 @@ const Navbar = () => {
                                 </div>
                             )}
                         </div>
+
 
                         {/* User */}
                         {user ? (
@@ -241,43 +285,53 @@ const Navbar = () => {
             </div>
 
             {/* Mobile Drawer */}
-            {isOpen && (
-                <div className="md:hidden bg-white shadow-lg p-4 space-y-3">
-                    <ul className="space-y-2">{navLinks}</ul>
-                    {user || userInfo ? (
-                        <div className="flex items-center gap-3 mt-3">
-                            <img src={userInfo?.image || user?.photoURL} alt="Profile" className="w-10 h-10 rounded-full" />
-                            <div>
-                                <p className="font-semibold text-[#5f0f40]">{userInfo.name || "User"}</p>
-                                <Link
-                                    to="/dashboard"
-                                    className="block text-sm text-[#5f0f40] hover:text-[#fb8b24] hover:underline"
-                                    onClick={() => setIsOpen(false)}
-                                >
-                                    Dashboard
-                                </Link>
-                                <button
-                                    onClick={() => {
-                                        handleLogout();
-                                        setIsOpen(false);
-                                    }}
-                                    className="block text-sm text-[#9a031e] hover:underline mt-1"
-                                >
-                                    Logout
-                                </button>
-                            </div>
+            <div
+                className={`fixed top-16 right-0 h-full bg-white shadow-lg z-50 transform transition-transform duration-300 ${isOpen ? "translate-x-0" : "translate-x-full"
+                    } w-1/2 md:hidden`}
+            >
+
+                <ul className="flex flex-col gap-3 p-4">
+                    {navLinks}
+                </ul>
+
+                {user || userInfo ? (
+                    <div className="flex items-center gap-3 mt-4 p-4 border-t">
+                        <img
+                            src={userInfo?.image || user?.photoURL}
+                            alt="Profile"
+                            className="w-10 h-10 rounded-full"
+                        />
+                        <div>
+                            <p className="font-semibold text-[#5f0f40]">{userInfo?.name || "User"}</p>
+                            <Link
+                                to="/dashboard"
+                                className="block text-sm text-[#5f0f40] hover:text-[#fb8b24] hover:underline"
+                                onClick={() => setIsOpen(false)}
+                            >
+                                Dashboard
+                            </Link>
+                            <button
+                                onClick={() => {
+                                    handleLogout();
+                                    setIsOpen(false);
+                                }}
+                                className="block text-sm text-[#9a031e] hover:underline mt-1"
+                            >
+                                Logout
+                            </button>
                         </div>
-                    ) : (
-                        <Link
-                            to="/login"
-                            className="w-full block px-4 py-2 bg-[#9a031e] hover:bg-[#7a0215] text-white rounded-full font-semibold text-center"
-                            onClick={() => setIsOpen(false)}
-                        >
-                            Join Us
-                        </Link>
-                    )}
-                </div>
-            )}
+                    </div>
+                ) : (
+                    <Link
+                        to="/login"
+                        className="block w-full px-4 py-2 mt-4 bg-[#9a031e] hover:bg-[#7a0215] text-white rounded-full font-semibold text-center"
+                        onClick={() => setIsOpen(false)}
+                    >
+                        Join Us
+                    </Link>
+                )}
+            </div>
+
         </nav>
     );
 };
