@@ -28,7 +28,7 @@ const Register = () => {
             // Create user in Firebase Auth
             const userCredential = await createUser(data.email, data.password);
             const user = userCredential.user;
-            console.log(user)
+            // user();
 
             // Update Firebase user profile
             await updateUserProfile({ displayName: data.name, photoURL });
@@ -44,8 +44,7 @@ const Register = () => {
                 created_At: new Date().toISOString(),
                 last_log_in: new Date().toISOString(),
             };
-            axiosInstance.post("/users", userInfo)
-                .catch(err => console.error("DB Update Error:", err));
+            axiosInstance.post("/users", userInfo).catch(err => console.error("DB Update Error:", err));
 
             Swal.fire("Success", "Registration Successful!", "success");
             navigate(from, { replace: true });
@@ -70,8 +69,7 @@ const Register = () => {
                     created_At: new Date().toISOString(),
                     last_log_in: new Date().toISOString(),
                 };
-                axiosInstance.post("/users", userInfo)
-                    .catch(err => console.error("DB Update Error:", err));
+                axiosInstance.post("/users", userInfo).catch(err => console.error("DB Update Error:", err));
 
                 Swal.fire("Success", "Google Sign-in Successful!", "success");
                 navigate(from, { replace: true });
@@ -82,50 +80,58 @@ const Register = () => {
     };
 
     return (
-        <div className="card bg-base-100 w-full max-w-sm mx-auto p-6 shadow">
-            <h2 className="text-2xl font-bold text-center mb-4">Register</h2>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-3" noValidate>
-                <input
-                    type="file"
-                    {...registerForm("photo", { required: "Profile photo is required" })}
-                    className="file-input w-full"
-                />
-                {errors.photo && <p className="text-red-500 text-sm">{errors.photo.message}</p>}
-                <input
-                    type="text"
-                    {...registerForm("name", { required: "Name is required" })}
-                    placeholder="Name"
-                    className={`input input-bordered w-full ${errors.name ? "input-error" : ""}`}
-                />
-                {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
-                <input
-                    type="email"
-                    {...registerForm("email", { required: "Email is required" })}
-                    placeholder="Email"
-                    className={`input input-bordered w-full ${errors.email ? "input-error" : ""}`}
-                />
-                {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
-                <input
-                    type="password"
-                    {...registerForm("password", { required: "Password is required", minLength: { value: 6, message: "Minimum 6 characters" } })}
-                    placeholder="Password"
-                    className={`input input-bordered w-full ${errors.password ? "input-error" : ""}`}
-                />
-                {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
-                <button type="submit" disabled={uploading} className="btn btn-primary w-full">
-                    {uploading ? "Registering..." : "Register"}
+        <div className="min-h-screen flex items-center justify-center">
+            <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-6">
+                <h2 className="text-3xl font-bold text-center text-[#5f0f40] mb-6">Register</h2>
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+                    <input
+                        type="file"
+                        {...registerForm("photo", { required: "Profile photo is required" })}
+                        className="file-input w-full border-[#e36414] focus:border-[#fb8b24]"
+                    />
+                    {errors.photo && <p className="text-red-500 text-sm">{errors.photo.message}</p>}
+
+                    <input
+                        type="text"
+                        {...registerForm("name", { required: "Name is required" })}
+                        placeholder="Name"
+                        className={`input input-bordered w-full border-[#e36414] focus:border-[#fb8b24] ${errors.name ? "input-error" : ""}`}
+                    />
+                    {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
+
+                    <input
+                        type="email"
+                        {...registerForm("email", { required: "Email is required" })}
+                        placeholder="Email"
+                        className={`input input-bordered w-full border-[#e36414] focus:border-[#fb8b24] ${errors.email ? "input-error" : ""}`}
+                    />
+                    {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+
+                    <input
+                        type="password"
+                        {...registerForm("password", { required: "Password is required", minLength: { value: 6, message: "Minimum 6 characters" } })}
+                        placeholder="Password"
+                        className={`input input-bordered w-full border-[#e36414] focus:border-[#fb8b24] ${errors.password ? "input-error" : ""}`}
+                    />
+                    {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
+
+                    <button type="submit" disabled={uploading} className="w-full py-2 rounded-lg bg-gradient-to-r from-[#5f0f40] via-[#9a031e] to-[#fb8b24] text-white font-bold shadow hover:opacity-90 transition">
+                        {uploading ? "Registering..." : "Register"}
+                    </button>
+                </form>
+
+                <p className="mt-4 text-center text-sm text-gray-700">
+                    Already have an account?{" "}
+                    <Link to="/login" className="text-[#e36414] hover:underline">Login</Link>
+                </p>
+
+                <button
+                    onClick={handleGoogleSignIn}
+                    className="w-full mt-3 py-2 flex items-center justify-center gap-2 border-2 border-[#e36414] text-[#5f0f40] rounded-lg shadow hover:bg-[#e36414] hover:text-white transition font-semibold"
+                >
+                    <FcGoogle size={22} /> Register with Google
                 </button>
-            </form>
-            <p className="mt-2 text-center">
-                Already have an account?{" "}
-                <Link to="/login" className="text-blue-600 hover:underline">Login</Link>
-            </p>
-            <button
-                onClick={handleGoogleSignIn}
-                className="btn btn-outline w-full mt-3 flex items-center justify-center gap-2"
-            >
-                <FcGoogle size={22} /> Register with Google
-            </button>
+            </div>
         </div>
     );
 };

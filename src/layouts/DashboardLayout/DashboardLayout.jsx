@@ -4,6 +4,7 @@ import Navbar from '../../components/Navber/Navber';
 import {
     AlertCircle,
     FilePlus,
+    HomeIcon,
     ListOrdered,
     Megaphone,
     Menu,
@@ -77,13 +78,18 @@ const DeshBoardLayout = () => {
                 </div>
 
                 {/* Sidebar */}
-                <div className="drawer-side mt-16 lg:mt-2">
+                <div className="drawer-side mt-16 lg:mt-4">
                     <label htmlFor="my-drawer-2" className="drawer-overlay"></label>
 
                     <ul className="menu p-4 w-64 min-h-full bg-[#fb8b24]/10 text-base-content space-y-2">
                         {/* USER DASHBOARD */}
                         {role === 'user' && (
                             <>
+                                <li>
+                                    <NavLink to="/dashboard/overview" className={({ isActive }) => isActive ? activeClass : normalClass}>
+                                        <HomeIcon size={18} /> Overview
+                                    </NavLink>
+                                </li>
                                 <li>
                                     <NavLink to="/dashboard/my-profile" className={({ isActive }) => isActive ? activeClass : normalClass}>
                                         <UserCircle size={18} /> My Profile

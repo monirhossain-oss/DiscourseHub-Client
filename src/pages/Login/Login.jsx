@@ -16,15 +16,13 @@ export default function Login() {
     const onSubmit = (data) => {
         signIn(data.email, data.password)
             .then(result => {
-                // Silent DB upsert
                 const userInfo = {
                     email: result.user.email,
                     name: result.user.displayName || "No Name",
                     image: result.user.photoURL || "",
                     last_log_in: new Date().toISOString(),
                 };
-                axiosInstance.post("/users", userInfo)
-                    .catch(err => console.error("DB Update Error:", err));
+                axiosInstance.post("/users", userInfo).catch(err => console.error("DB Update Error:", err));
 
                 Swal.fire("Success", "Login Successful!", "success");
                 navigate(from, { replace: true });
@@ -49,9 +47,7 @@ export default function Login() {
                     last_log_in: new Date().toISOString(),
                 };
 
-                axiosInstance.post("/users", userInfo)
-                    .catch(err => console.error("DB Update Error:", err));
-
+                axiosInstance.post("/users", userInfo).catch(err => console.error("DB Update Error:", err));
                 Swal.fire("Success", "Google Sign-in Successful!", "success");
                 navigate(from, { replace: true });
             })
@@ -61,42 +57,49 @@ export default function Login() {
     };
 
     return (
-        <div className="p-8 rounded shadow w-full max-w-sm mx-auto">
-            <h2 className="text-2xl font-bold mb-6 text-center">Login to DiscourseHub</h2>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
-                <div>
-                    <label className="block mb-1 font-medium">Email</label>
-                    <input
-                        type="email"
-                        placeholder="you@example.com"
-                        className={`input input-bordered w-full ${errors.email ? "input-error" : ""}`}
-                        {...register("email", { required: "Email is required" })}
-                    />
-                    {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
-                </div>
-                <div>
-                    <label className="block mb-1 font-medium">Password</label>
-                    <input
-                        type="password"
-                        placeholder="Enter your password"
-                        className={`input input-bordered w-full ${errors.password ? "input-error" : ""}`}
-                        {...register("password", { required: "Password is required", minLength: { value: 6, message: "Minimum 6 characters" } })}
-                    />
-                    {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
-                </div>
-                <button type="submit" className="btn btn-primary w-full">Login</button>
-            </form>
-            <p className="mt-4 text-center text-sm">
-                Don’t have an account?{" "}
-                <Link to="/register" className="text-blue-600 hover:underline">Register here</Link>
-            </p>
-            <button
-                onClick={handleGoogleLogin}
-                className="flex items-center bg-gray-400 cursor-pointer justify-center mt-4 gap-3 w-full py-2 border-2 border-green-500 rounded-md shadow-sm hover:bg-green-500 transition"
-            >
-                <FcGoogle size={22} />
-                <span className="text-gray-800 dark:text-white font-semibold">Login with Google</span>
-            </button>
+        <div className="min-h-screen flex items-center justify-center">
+            <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8 space-y-6">
+                <h2 className="text-3xl font-bold text-[#5f0f40] text-center">Login to DiscourseHub</h2>
+
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+                    <div>
+                        <label className="block mb-1 font-medium text-[#9a031e]">Email</label>
+                        <input
+                            type="email"
+                            placeholder="you@example.com"
+                            className={`input input-bordered w-full border-[#e36414] focus:border-[#fb8b24] ${errors.email ? "input-error" : ""}`}
+                            {...register("email", { required: "Email is required" })}
+                        />
+                        {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+                    </div>
+                    <div>
+                        <label className="block mb-1 font-medium text-[#9a031e]">Password</label>
+                        <input
+                            type="password"
+                            placeholder="Enter your password"
+                            className={`input input-bordered w-full border-[#e36414] focus:border-[#fb8b24] ${errors.password ? "input-error" : ""}`}
+                            {...register("password", { required: "Password is required", minLength: { value: 6, message: "Minimum 6 characters" } })}
+                        />
+                        {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
+                    </div>
+                    <button type="submit" className="w-full bg-gradient-to-r from-[#5f0f40] via-[#9a031e] to-[#fb8b24] text-white font-bold py-2 rounded-lg shadow hover:opacity-90 transition">
+                        Login
+                    </button>
+                </form>
+
+                <p className="mt-4 text-center text-sm text-gray-700">
+                    Don’t have an account?{" "}
+                    <Link to="/register" className="text-[#e36414] hover:underline">Register here</Link>
+                </p>
+
+                <button
+                    onClick={handleGoogleLogin}
+                    className="flex items-center justify-center gap-3 w-full py-2 border-2 border-[#e36414] rounded-lg shadow hover:bg-[#e36414] hover:text-white transition mt-4 font-semibold"
+                >
+                    <FcGoogle size={22} />
+                    Login with Google
+                </button>
+            </div>
         </div>
     );
 }

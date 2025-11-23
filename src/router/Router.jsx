@@ -19,6 +19,7 @@ import AdminProfile from "../pages/Dashboard/Admin/AdminProfile/AdminProfile";
 import ErrorPage from "../components/ErrorPage/ErrorPage";
 import About from "../pages/Home/About";
 import Blog from "../pages/Blogs/Blogs";
+import Overview from "../pages/Dashboard/Overview/Overview";
 
 export const router = createBrowserRouter([
     {
@@ -83,6 +84,10 @@ export const router = createBrowserRouter([
             {
                 path: "my-posts",
                 Component: MyPosts
+            },
+            {
+                path:'overview',
+                Component: Overview
             },
             {
                 path: 'profile',

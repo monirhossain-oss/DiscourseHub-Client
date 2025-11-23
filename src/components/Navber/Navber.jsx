@@ -212,7 +212,7 @@ const Navbar = () => {
                                             {user?.displayName || userInfo?.name}
                                         </p>
                                         <Link
-                                            to="/dashboard/my-profile"
+                                            to="/dashboard/overview"
                                             className="block px-4 py-2 text-sm hover:bg-gray-100 text-[#5f0f40]"
                                             onClick={() => setDropdownOpen(false)}
                                         >
