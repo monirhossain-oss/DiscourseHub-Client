@@ -43,47 +43,46 @@ const AddAnnouncement = () => {
     };
 
     return (
-        <div className="p-6 bg-gray-300 rounded shadow">
-            <h2 className="text-2xl font-bold mb-4 text-center">Add Announcement</h2>
+        <div className=" bg-[#faf7f5] p-6  space-y-6">
+            {/* Admin Info Card */}
+            <div className="flex items-center gap-4 bg-[#FB8B24]/10 p-4 rounded-lg shadow-md">
+                <img
+                    src={userInfo.image || user?.photoURL}
+                    alt={userInfo.name || user?.displayName}
+                    className="w-20 h-20 rounded-full border-4 border-[#5F0F40] object-cover"
+                />
+                <div>
+                    <h3 className="text-xl font-bold text-[#5F0F40]">
+                        {userInfo.name || user?.displayName}
+                    </h3>
+                    <p className="text-sm text-gray-600">{user?.email}</p>
+                </div>
+            </div>
+
+            {/* Form */}
+            <h2 className="text-2xl font-bold text-[#5F0F40] text-center">Add New Announcement</h2>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                <div>
-                    <label className="block text-sm mb-1">Author Image</label>
-                    <input
-                        value={userInfo.image}
+                <input
+                    type="text"
+                    {...register('title', { required: 'Title is required' })}
+                    placeholder="Announcement Title"
+                    className="input input-bordered w-full border-[#FB8B24] focus:border-[#FB8B24] focus:ring-1 focus:ring-[#FB8B24]"
+                />
+                {errors.title && <p className="text-red-600 text-sm">{errors.title.message}</p>}
 
-                        {...register("photo", { required: "Profile photo is required" })}
-                        className="file-input px-3 w-full"
-                    />
-                    <label className="block text-sm mb-1">Author Name</label>
-                    <input
-                        type="text"
-                        {...register("name", { required: "Name is required" })}
-                        value={userInfo.name}
-                        placeholder="Name"
-                        className={`input input-bordered w-full ${errors.name ? "input-error" : ""}`}
-                    />
-                    {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
-                    <label className="block text-sm mb-1">Title</label>
-                    <input
-                        {...register('title', { required: 'Title is required' })}
-                        className="input input-bordered w-full"
-                        placeholder="Announcement Title"
-                    />
-                    {errors.title && <p className="text-red-500 text-sm">{errors.title.message}</p>}
-                </div>
+                <textarea
+                    {...register('description', { required: 'Message is required' })}
+                    placeholder="Announcement description"
+                    rows={4}
+                    className="textarea textarea-bordered w-full border-[#FB8B24] focus:border-[#FB8B24] focus:ring-1 focus:ring-[#FB8B24]"
+                ></textarea>
+                {errors.description && <p className="text-red-600 text-sm">{errors.description.message}</p>}
 
-                <div>
-                    <label className="block text-sm mb-1">Message</label>
-                    <textarea
-                        {...register('description', { required: 'Message is required' })}
-                        className="textarea textarea-bordered w-full"
-                        placeholder="Announcement description"
-                        rows={4}
-                    ></textarea>
-                    {errors.message && <p className="text-red-500 text-sm">{errors.message.message}</p>}
-                </div>
-
-                <button type="submit" className="btn btn-primary w-full" disabled={isLoading}>
+                <button
+                    type="submit"
+                    className="w-full py-2 px-4 rounded-lg bg-[#5F0F40] text-white font-semibold hover:bg-[#9A031E] transition-colors duration-300"
+                    disabled={isLoading}
+                >
                     {isLoading ? 'Posting...' : 'Add Announcement'}
                 </button>
             </form>

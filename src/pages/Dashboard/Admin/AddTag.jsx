@@ -29,20 +29,28 @@ const AddTag = () => {
     };
 
     return (
-        <div className=" p-4 bg-white mt-8 rounded-2xl shadow-2xl">
-            <h2 className="text-2xl text-center font-bold mb-4">Add New Tag</h2>
-            <form onSubmit={handleAddTag} className="space-y-3 bg-white p-4 rounded shadow">
+        <div className=" bg-white p-6">
+            <h2 className="text-2xl text-center font-bold text-[#5F0F40] mb-6">
+                Add New Tag
+            </h2>
+            <form onSubmit={handleAddTag} className="space-y-4">
                 <input
                     type="text"
                     placeholder="Enter tag name"
                     value={tagName}
                     onChange={(e) => setTagName(e.target.value)}
-                    className="input input-bordered w-full"
+                    className="input input-bordered w-full border-[#FB8B24] focus:border-[#FB8B24] focus:ring-1 focus:ring-[#FB8B24] text-gray-700"
                     required
                 />
-                <button type="submit" className="btn btn-primary w-full">Add Tag</button>
+                <button
+                    type="submit"
+                    className="w-full bg-[#5F0F40] text-white font-semibold py-2 px-4 rounded-lg shadow hover:bg-[#9A031E] transition-colors duration-300"
+                >
+                    Add Tag
+                </button>
             </form>
         </div>
+
     );
 };
 

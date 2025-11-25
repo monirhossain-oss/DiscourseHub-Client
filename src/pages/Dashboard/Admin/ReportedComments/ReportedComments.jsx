@@ -14,64 +14,68 @@ const ReportedComments = () => {
         }
     });
 
+    const primaryDark = "#5F0F40";
+    const primaryRed = "#9A031E";
+    const accentOrange = "#FB8B24";
+
+    // DELETE COMMENT
     const handleDelete = async (id) => {
         const confirm = await Swal.fire({
-            title: 'Are you sure?',
-            text: 'You are about to delete this comment!',
+            title: 'Delete comment?',
+            text: 'This action cannot be undone.',
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Yes, delete it!',
-            cancelButtonText: 'Cancel',
+            confirmButtonText: 'Delete',
+            confirmButtonColor: primaryRed
         });
 
-        if (confirm.isConfirmed) {
-            try {
-                await axiosSecure.delete(`/admin/comments/${id}`);
-                await refetch();
-                Swal.fire('Deleted!', 'The comment has been deleted.', 'success');
-            } catch (error) {
-                Swal.fire('Error!', 'Failed to delete the comment.', 'error');
-                console.log(error)
-            }
+        if (!confirm.isConfirmed) return;
+
+        try {
+            await axiosSecure.delete(`/admin/comments/${id}`);
+            refetch();
+            Swal.fire('Deleted!', 'Comment removed successfully.', 'success');
+        } catch (err) {
+            console.error(err);
+            Swal.fire('Error!', 'Failed to delete comment.', 'error');
         }
     };
 
+    // UNREPORT COMMENT
     const handleUnreport = async (id) => {
         try {
             await axiosSecure.patch(`/admin/comments/${id}/unreport`);
-            await refetch();
-            Swal.fire('Updated!', 'Marked as reviewed.', 'success');
-        } catch (error) {
-            Swal.fire('Error!', 'Failed to update the comment.', 'error');
-            console.log(error)
+            refetch();
+            Swal.fire('Success', 'Marked as reviewed.', 'success');
+        } catch (err) {
+            console.error(err);
+            Swal.fire('Error!', 'Failed to update.', 'error');
         }
     };
 
-    // Skeleton Loader with Framer Motion animation
+    // SKELETON
     if (isLoading) {
         return (
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 0.5 }}
-                className="px-1 w-full bg-gray-300 rounded-2xl py-6 animate-pulse"
+                className="px-2 w-full rounded-2xl py-6 animate-pulse"
+                style={{ backgroundColor: accentOrange + "20" }}
             >
-                <h2 className="text-xl font-semibold mb-4 text-center bg-gray-200 h-6 w-60 mx-auto rounded"></h2>
-                <div className="overflow-x-auto">
-                    <table className="table table-zebra w-full text-sm">
+                <div className="h-6 w-64 bg-gray-300 mx-auto rounded"></div>
+                <div className="overflow-x-auto mt-4">
+                    <table className="table w-full">
                         <thead>
-                            <tr>
-                                {[...Array(6)].map((_, i) => (
-                                    <th key={i} className="h-6 bg-gray-200 rounded">&nbsp;</th>
-                                ))}
-                            </tr>
+                            <tr>{[...Array(6)].map((_, i) => (
+                                <th key={i}><div className="h-6 bg-gray-300 rounded"></div></th>
+                            ))}</tr>
                         </thead>
                         <tbody>
                             {[...Array(5)].map((_, i) => (
                                 <tr key={i}>
                                     {[...Array(6)].map((_, j) => (
                                         <td key={j}>
-                                            <div className="h-6 w-full bg-gray-200 rounded">&nbsp;</div>
+                                            <div className="h-6 bg-gray-300 rounded"></div>
                                         </td>
                                     ))}
                                 </tr>
@@ -87,69 +91,89 @@ const ReportedComments = () => {
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="px-1 w-full bg-gray-300 rounded-2xl py-6"
+            className="px-2 w-full py-6 shadow-md"
+            style={{ backgroundColor: accentOrange + "20" }}
         >
-            <h2 className="text-xl font-semibold mb-4 text-center">📢 Reported Comments</h2>
+            {/* Title */}
+            <h2
+                className="text-xl font-bold mb-5 text-center"
+                style={{ color: primaryDark }}
+            >
+                 Reported Comments
+            </h2>
+
             <div className="overflow-x-auto">
-                <table className="table table-zebra w-full text-sm">
-                    <thead className="text-sm bg-white">
-                        <tr>
-                            <th className="whitespace-nowrap">Reported By</th>
-                            <th className="whitespace-nowrap">Reported User</th>
-                            <th className="whitespace-nowrap">Comment</th>
-                            <th className="whitespace-nowrap">Feedback</th>
-                            <th className="whitespace-nowrap">Report Date</th>
-                            <th className="whitespace-nowrap">Actions</th>
+                <table className="table w-full text-sm">
+
+                    {/* Table Head */}
+                    <thead style={{ backgroundColor: accentOrange }}>
+                        <tr className="text-white">
+                            <th>Reported By</th>
+                            <th>Reported User</th>
+                            <th>Comment</th>
+                            <th>Feedback</th>
+                            <th>Report Date</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
+
+                    {/* Table Body */}
                     <tbody>
+
                         {reportedComments.length === 0 && (
                             <tr>
-                                <td colSpan="6" className="text-center text-gray-500 py-4 text-sm">
+                                <td colSpan="6" className="text-center py-4 text-gray-600">
                                     No reported comments
                                 </td>
                             </tr>
                         )}
 
-                        {reportedComments.map(comment => (
+                        {reportedComments.map((c) => (
                             <motion.tr
-                                key={comment._id}
+                                key={c._id}
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.3 }}
-                                className="hover:bg-gray-100 transition"
+                                transition={{ duration: 0.2 }}
+                                style={{
+                                    transition: "0.2s",
+                                }}
+                                className="hover:bg-opacity-20 hover:text-black"
                             >
-                                <td className="whitespace-nowrap">{comment.reportedByEmail || 'Anonymous'}</td>
-                                <td className="whitespace-nowrap">{comment.authorEmail || 'N/A'}</td>
-                                <td
-                                    className="max-w-[200px] truncate whitespace-nowrap overflow-hidden"
-                                    title={comment.text}
-                                >
-                                    {comment.text}
+                                <td>{c.reportedByEmail || "Anonymous"}</td>
+                                <td>{c.authorEmail || "N/A"}</td>
+
+                                <td title={c.text} className="max-w-[200px] truncate">
+                                    {c.text}
                                 </td>
-                                <td className="whitespace-nowrap">{comment.feedback || 'N/A'}</td>
-                                <td className="whitespace-nowrap">
-                                    {new Date(comment.reportedAt || comment.createdAt).toLocaleString()}
-                                </td>
-                                <td className="space-x-1 flex flex-wrap gap-1">
+
+                                <td>{c.feedback || "N/A"}</td>
+
+                                <td>{new Date(c.reportedAt || c.createdAt).toLocaleString()}</td>
+
+                                <td className="flex flex-wrap gap-1">
+
+                                    {/* Delete btn */}
                                     <button
-                                        onClick={() => handleDelete(comment._id)}
-                                        className="btn btn-error btn-xs"
-                                        aria-label="Delete comment"
+                                        onClick={() => handleDelete(c._id)}
+                                        className="btn btn-xs text-white"
+                                        style={{ backgroundColor: primaryRed }}
                                     >
                                         Delete
                                     </button>
+
+                                    {/* Unreport btn */}
                                     <button
-                                        onClick={() => handleUnreport(comment._id)}
-                                        className="btn btn-success btn-xs"
-                                        aria-label="Mark as reviewed"
+                                        onClick={() => handleUnreport(c._id)}
+                                        className="btn btn-xs text-white"
+                                        style={{ backgroundColor: primaryDark }}
                                     >
                                         Reviewed
                                     </button>
+
                                 </td>
                             </motion.tr>
                         ))}
+
                     </tbody>
                 </table>
             </div>

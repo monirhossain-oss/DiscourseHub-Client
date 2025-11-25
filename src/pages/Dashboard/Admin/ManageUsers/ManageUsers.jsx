@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import Swal from 'sweetalert2';
 import useAxiosSecure from '../../../../hooks/useAxiosSecure';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import Loader from '../../../../components/Loader/Loader';
 
 function useDebounce(value, delay) {
     const [debouncedValue, setDebouncedValue] = useState(value);
@@ -64,9 +65,6 @@ const ManageUsers = () => {
                     } else {
                         Swal.fire('Oops!', 'Could not promote user.', 'error');
                     }
-                }).catch(err => {
-                    console.error(err);
-                    Swal.fire('Error', 'Something went wrong', 'error');
                 });
             }
         });
@@ -89,10 +87,6 @@ const ManageUsers = () => {
                         } else {
                             Swal.fire('Oops!', 'Could not remove admin.', 'error');
                         }
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        Swal.fire('Error', 'Something went wrong', 'error');
                     });
             }
         });
@@ -116,68 +110,28 @@ const ManageUsers = () => {
             }
         });
     };
-
-    // Skeleton Loader
-    if (isLoading) {
-        return (
-            <div className="px-1 py-4 bg-gray-300 rounded-2xl animate-pulse">
-                <h2 className="text-2xl font-bold mb-4 text-center">Manage Users</h2>
-
-                {/* Search Field Skeleton */}
-                <div className="mb-4 flex justify-center">
-                    <div className="h-10 w-full max-w-md bg-gray-200 rounded"></div>
-                </div>
-
-                {/* Table Skeleton */}
-                <div className="overflow-x-auto">
-                    <table className="table table-zebra w-full">
-                        <thead>
-                            <tr>
-                                {[...Array(6)].map((_, i) => (
-                                    <th key={i} className="h-6 bg-gray-200 rounded">&nbsp;</th>
-                                ))}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {[...Array(USERS_PER_PAGE)].map((_, i) => (
-                                <tr key={i}>
-                                    <td><div className="h-6 w-full bg-gray-200 rounded">&nbsp;</div></td>
-                                    <td><div className="h-10 w-10 bg-gray-200 rounded-full mx-auto">&nbsp;</div></td>
-                                    <td><div className="h-6 w-24 bg-gray-200 rounded mx-auto">&nbsp;</div></td>
-                                    <td><div className="h-6 w-32 bg-gray-200 rounded mx-auto">&nbsp;</div></td>
-                                    <td><div className="h-6 w-16 bg-gray-200 rounded mx-auto">&nbsp;</div></td>
-                                    <td>
-                                        <div className="flex gap-2 justify-center">
-                                            <div className="h-6 w-16 bg-gray-200 rounded">&nbsp;</div>
-                                            <div className="h-6 w-16 bg-gray-200 rounded">&nbsp;</div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-
-                {/* Pagination Skeleton */}
-                <div className="flex justify-center bg-gray-400 p-2 items-center gap-2 mt-6">
-                    {[...Array(3)].map((_, i) => (
-                        <div key={i} className="h-6 w-6 bg-gray-200 rounded-full"></div>
-                    ))}
-                </div>
-            </div>
-        );
+    if (isLoading){
+        return <Loader></Loader>
     }
 
     return (
-        <div className="px-1 py-4 bg-gray-300 rounded-2xl">
-            <h2 className="text-2xl font-bold mb-4 text-center">Manage Users</h2>
+        <div
+            className="px-2 py-4  bg-[#fb8b24]/10"
+        >
+
+            <h2
+                className="text-2xl font-bold mb-4 text-center text-white"
+                style={{ color: "#5f0f40" }}
+            >
+                Manage Users
+            </h2>
 
             {/* Search Field */}
             <div className="mb-4 flex justify-center">
                 <input
                     type="text"
                     placeholder="Search by name or email"
-                    className="input input-bordered w-full max-w-md"
+                    className="input input-bordered w-full max-w-md bg-white"
                     value={searchText}
                     onChange={(e) => {
                         setSearchText(e.target.value);
@@ -189,9 +143,9 @@ const ManageUsers = () => {
 
             {/* Users Table */}
             <div className="overflow-x-auto">
-                <table className="table table-zebra w-full">
+                <table className="table w-full">
                     <thead>
-                        <tr className='text-black bg-white'>
+                        <tr style={{ backgroundColor: "#5f0f40", color: "white" }}>
                             <th>#</th>
                             <th>Photo</th>
                             <th>Name</th>
@@ -200,10 +154,11 @@ const ManageUsers = () => {
                             <th>Actions</th>
                         </tr>
                     </thead>
+
                     <tbody>
                         {currentUsers.length > 0 ? (
                             currentUsers.map((user, index) => (
-                                <tr key={user._id}>
+                                <tr key={user._id} className="bg-white">
                                     <td>{startIndex + index + 1}</td>
                                     <td>
                                         <img
@@ -214,30 +169,44 @@ const ManageUsers = () => {
                                     </td>
                                     <td>{user.name}</td>
                                     <td>{user.email}</td>
+
+                                    {/* ROLE BADGE */}
                                     <td>
-                                        <span className={`badge ${user.role === 'admin' ? 'badge-success' : 'badge-info'}`}>
+                                        <span
+                                            className="badge text-white"
+                                            style={{
+                                                backgroundColor:
+                                                    user.role === "admin" ? "#5f0f40" : "#e36414",
+                                            }}
+                                        >
                                             {user.role}
                                         </span>
                                     </td>
+
+                                    {/* ACTION BUTTONS */}
                                     <td className="space-x-2">
                                         {user.role === 'admin' ? (
                                             <button
                                                 onClick={() => handleRemoveAdmin(user._id)}
-                                                className="btn btn-sm btn-warning"
+                                                className="btn btn-sm text-white"
+                                                style={{ backgroundColor: "#fb8b24" }}
                                             >
                                                 Remove Admin
                                             </button>
                                         ) : (
                                             <button
                                                 onClick={() => handleMakeAdmin(user._id)}
-                                                className="btn btn-sm btn-success"
+                                                className="btn btn-sm text-white"
+                                                style={{ backgroundColor: "#5f0f40" }}
                                             >
                                                 Make Admin
                                             </button>
                                         )}
+
                                         <button
                                             onClick={() => handleDelete(user._id)}
-                                            className="btn btn-sm btn-error"
+                                            className="btn btn-sm text-white"
+                                            style={{ backgroundColor: "#9a031e" }}
                                         >
                                             Delete
                                         </button>
@@ -246,9 +215,7 @@ const ManageUsers = () => {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="6" className="text-center py-4">
-                                    No users found.
-                                </td>
+                                <td colSpan="6" className="text-center py-4">No users found.</td>
                             </tr>
                         )}
                     </tbody>
@@ -257,12 +224,15 @@ const ManageUsers = () => {
 
             {/* Pagination */}
             {users.length > USERS_PER_PAGE && (
-                <div className="flex justify-center bg-gray-400 p-2 items-center gap-2 mt-6">
+                <div
+                    className="flex justify-center p-2 items-center gap-2 mt-6 rounded-xl"
+                    style={{ backgroundColor: "#5f0f40" }}
+                >
                     <button
                         onClick={() => handlePageChange(currentPage - 1)}
                         disabled={currentPage === 1}
-                        className="p-2 rounded-full hover:bg-gray-400 cursor-pointer disabled:opacity-50"
-                        aria-label="Previous Page"
+                        className="p-2 rounded-full disabled:opacity-50"
+                        style={{ backgroundColor: "#e36414", color: "white" }}
                     >
                         <ChevronLeft size={20} />
                     </button>
@@ -273,9 +243,11 @@ const ManageUsers = () => {
                             <button
                                 key={pageNum}
                                 onClick={() => handlePageChange(pageNum)}
-                                className={`px-3 py-1 rounded-full border font-semibold ${currentPage === pageNum
-                                    ? 'bg-blue-500 text-white'
-                                    : 'bg-white text-gray-700 hover:bg-gray-200'} transition`}
+                                className="px-3 py-1 rounded-full font-semibold text-white"
+                                style={{
+                                    backgroundColor:
+                                        currentPage === pageNum ? "#9a031e" : "#e36414",
+                                }}
                             >
                                 {pageNum}
                             </button>
@@ -285,8 +257,8 @@ const ManageUsers = () => {
                     <button
                         onClick={() => handlePageChange(currentPage + 1)}
                         disabled={currentPage === totalPages}
-                        className="p-2 rounded-full hover:bg-gray-400 cursor-pointer disabled:opacity-50"
-                        aria-label="Next Page"
+                        className="p-2 rounded-full disabled:opacity-50"
+                        style={{ backgroundColor: "#e36414", color: "white" }}
                     >
                         <ChevronRight size={20} />
                     </button>
