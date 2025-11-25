@@ -5,51 +5,44 @@ import useAuth from "../../hooks/useAuth";
 const Testimonials = () => {
     const { users } = useAuth();
 
-    const testimonials = users?.length
-        ? users.map((u, idx) => ({
-            img: u.photoURL || "https://via.placeholder.com/150",
-            name: u.displayName || "Anonymous",
-            role: u.role || "Member",
-            quote: u.testimonial || "This platform is amazing!",
-            id: idx,
-        }))
-        : [
-            {
-                img: "https://via.placeholder.com/150",
-                name: "Alice Johnson",
-                role: "Frontend Developer",
-                quote: "DiscourseHub has transformed how I collaborate with others. Highly recommended!",
-                id: 1,
-            },
-            {
-                img: "https://via.placeholder.com/150",
-                name: "Mark Thompson",
-                role: "Student",
-                quote: "I learned so much from the community discussions. Amazing platform!",
-                id: 2,
-            },
-            {
-                img: "https://via.placeholder.com/150",
-                name: "Sophie Lee",
-                role: "UI/UX Designer",
-                quote: "The platform is intuitive and engaging. Love getting answers quickly!",
-                id: 3,
-            },
-            {
-                img: "https://via.placeholder.com/150",
-                name: "John Doe",
-                role: "Backend Developer",
-                quote: "A great community to learn and share knowledge with peers.",
-                id: 4,
-            },
-            {
-                img: "https://via.placeholder.com/150",
-                name: "Emma Watson",
-                role: "Student",
-                quote: "I got quick answers to my questions, very helpful!",
-                id: 5,
-            },
-        ];
+    const testimonials = [
+        {
+            img: "https://randomuser.me/api/portraits/women/65.jpg",
+            name: "Alice Johnson",
+            role: "Frontend Developer",
+            quote: "DiscourseHub has transformed how I collaborate with others. Highly recommended!",
+            id: 1,
+        },
+        {
+            img: "https://randomuser.me/api/portraits/men/32.jpg",
+            name: "Mark Thompson",
+            role: "Student",
+            quote: "I learned so much from the community discussions. Amazing platform!",
+            id: 2,
+        },
+        {
+            img: "https://randomuser.me/api/portraits/women/44.jpg",
+            name: "Sophie Lee",
+            role: "UI/UX Designer",
+            quote: "The platform is intuitive and engaging. Love getting answers quickly!",
+            id: 3,
+        },
+        {
+            img: "https://randomuser.me/api/portraits/men/12.jpg",
+            name: "John Doe",
+            role: "Backend Developer",
+            quote: "A great community to learn and share knowledge with peers.",
+            id: 4,
+        },
+        {
+            img: "https://randomuser.me/api/portraits/women/22.jpg",
+            name: "Emma Watson",
+            role: "Student",
+            quote: "I got quick answers to my questions, very helpful!",
+            id: 5,
+        },
+    ];
+
 
     const settings = {
         dots: true,
@@ -80,7 +73,7 @@ const Testimonials = () => {
                 <Slider {...settings}>
                     {testimonials.map((t) => (
                         <div key={t.id} className="px-3">
-                            <div className="bg-white p-6 rounded-xl shadow-lg flex flex-col items-center text-center hover:shadow-2xl transition duration-300 h-full ">
+                            <div className="bg-white p-6 shadow-lg flex flex-col items-center text-center hover:shadow-2xl transition duration-300 h-full ">
                                 <img
                                     src={t.img}
                                     alt={t.name}

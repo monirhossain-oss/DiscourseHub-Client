@@ -121,7 +121,7 @@ const MyPosts = () => {
     if (loadingPosts) {
         return (
             <div className="py-4 px-1 bg-gray-300 rounded-2xl">
-                <h1 className="text-3xl font-bold mb-6 text-center">
+                <h1 className="text-3xl font-bold mb-6 text-center text-[#5f0f40]">
                     <Skeleton width={200} />
                 </h1>
                 {[...Array(3)].map((_, idx) => (
@@ -136,32 +136,42 @@ const MyPosts = () => {
     }
 
     return (
-        <div className="py-4 px-1 bg-gray-100">
-            <h1 className="text-2xl text-blue-600 font-bold mb-6 text-center">My Posts</h1>
+        <div className="py-4 px-1 bg-[#fb8b24]/10">
+            <h1 className="text-2xl text-[#5f0f40] font-bold mb-6 text-center">My Posts</h1>
 
             {posts.length === 0 ? (
-                <p className="text-center text-gray-600">You have no posts.</p>
+                <p className="text-center text-[#9a031e]">You have no posts.</p>
             ) : (
                 <div className="overflow-x-auto">
-                    <table className="table-auto min-w-full border-collapse border border-gray-300">
+                    <table className="table-auto min-w-full border-collapse border border-[#5f0f40]">
                         <thead>
-                            <tr className="bg-gray-100">
-                                <th className="border px-4 py-2">Title</th>
-                                <th className="border px-4 py-2">Vote Count</th>
-                                <th className="border px-4 py-2">Comments</th>
-                                <th className="border px-4 py-2">Delete</th>
+                            <tr className="bg-[#e36414]/20">
+                                <th className="border px-4 py-2 text-[#5f0f40]">Title</th>
+                                <th className="border px-4 py-2 text-[#5f0f40]">Vote Count</th>
+                                <th className="border px-4 py-2 text-[#5f0f40]">Comments</th>
+                                <th className="border px-4 py-2 text-[#5f0f40]">Delete</th>
                             </tr>
                         </thead>
                         <tbody>
                             {posts.map(post => (
-                                <tr key={post._id} className="hover:bg-gray-50 transition-colors">
-                                    <td className="border px-4 py-2">{post.title}</td>
-                                    <td className="border px-4 py-2">{post.upVote} - {post.downVote}</td>
+                                <tr key={post._id} className="hover:bg-[#e36414]/10 transition-colors">
+                                    <td className="border px-4 py-2 text-[#0f4c5c]">{post.title}</td>
+                                    <td className="border px-4 py-2 text-[#0f4c5c]">{post.upVote} - {post.downVote}</td>
                                     <td className="border px-4 py-2 text-center">
-                                        <button onClick={() => setActivePostId(post._id)} className="btn btn-info btn-sm">View Comments</button>
+                                        <button
+                                            onClick={() => setActivePostId(post._id)}
+                                            className="bg-[#5f0f40] text-white px-3 py-1 rounded hover:bg-[#9a031e] transition-colors"
+                                        >
+                                            View Comments
+                                        </button>
                                     </td>
                                     <td className="border px-4 py-2 text-center">
-                                        <button onClick={() => handleDeletePost(post._id)} className="btn btn-error btn-sm">Delete</button>
+                                        <button
+                                            onClick={() => handleDeletePost(post._id)}
+                                            className="bg-[#d33] text-white px-3 py-1 rounded hover:bg-[#9a031e] transition-colors"
+                                        >
+                                            Delete
+                                        </button>
                                     </td>
                                 </tr>
                             ))}
@@ -174,13 +184,13 @@ const MyPosts = () => {
             {activePostId && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-start pt-20 z-50">
                     <div className="bg-white w-full max-w-4xl rounded shadow-lg p-6 relative max-h-[80vh] overflow-y-auto">
-                        <h2 className="text-xl font-bold mb-4">Comments</h2>
-                        <button onClick={() => setActivePostId(null)} className="absolute top-4 right-4 text-gray-600 text-2xl">&times;</button>
+                        <h2 className="text-xl font-bold mb-4 text-[#5f0f40]">Comments</h2>
+                        <button onClick={() => setActivePostId(null)} className="absolute top-4 right-4 text-[#9a031e] text-2xl hover:text-[#5f0f40]">&times;</button>
 
                         {loadingComments ? (
                             <div>
                                 {[...Array(5)].map((_, idx) => (
-                                    <div key={idx} className="mb-3 p-2 border rounded">
+                                    <div key={idx} className="mb-3 p-2 border rounded border-[#e36414]/30">
                                         <Skeleton height={20} width={150} className="mb-1" />
                                         <Skeleton height={15} width={`80%`} />
                                         <Skeleton height={25} width={100} className="mt-1" />
@@ -188,15 +198,15 @@ const MyPosts = () => {
                                 ))}
                             </div>
                         ) : comments.length === 0 ? (
-                            <p>No comments found.</p>
+                            <p className="text-[#9a031e]">No comments found.</p>
                         ) : (
-                            <table className="table-auto w-full border-collapse border border-gray-300">
+                            <table className="table-auto w-full border-collapse border border-[#5f0f40]">
                                 <thead>
-                                    <tr className="bg-gray-100">
-                                        <th className="border px-4 py-2">Commenter Email</th>
-                                        <th className="border px-4 py-2">Comment</th>
-                                        <th className="border px-4 py-2">Feedback</th>
-                                        <th className="border px-4 py-2">Report</th>
+                                    <tr className="bg-[#e36414]/20">
+                                        <th className="border px-4 py-2 text-[#5f0f40]">Commenter Email</th>
+                                        <th className="border px-4 py-2 text-[#5f0f40]">Comment</th>
+                                        <th className="border px-4 py-2 text-[#5f0f40]">Feedback</th>
+                                        <th className="border px-4 py-2 text-[#5f0f40]">Report</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -205,13 +215,13 @@ const MyPosts = () => {
                                         const selected = selectedFeedbacks[comment._id] || '';
 
                                         return (
-                                            <tr key={comment._id}>
-                                                <td className="border px-4 py-2 break-words">{comment.authorEmail}</td>
-                                                <td className="border px-4 py-2 break-words">
+                                            <tr key={comment._id} className="hover:bg-[#fb8b24]/10 transition-colors">
+                                                <td className="border px-4 py-2 break-words text-[#0f4c5c]">{comment.authorEmail}</td>
+                                                <td className="border px-4 py-2 break-words text-[#0f4c5c]">
                                                     {isLong ? (
                                                         <>
                                                             {comment.text.slice(0, 20)}...
-                                                            <button onClick={() => setReadMoreComment(comment.text)} className="text-blue-600 text-sm ml-2 underline">Read More</button>
+                                                            <button onClick={() => setReadMoreComment(comment.text)} className="text-[#5f0f40] text-sm ml-2 underline hover:text-[#9a031e]">Read More</button>
                                                         </>
                                                     ) : comment.text}
                                                 </td>
@@ -219,7 +229,7 @@ const MyPosts = () => {
                                                     <select
                                                         value={selected}
                                                         onChange={(e) => handleFeedbackChange(comment._id, e)}
-                                                        className="select select-bordered w-full max-w-[150px]"
+                                                        className="border border-[#5f0f40] rounded px-2 py-1 w-full max-w-[150px]"
                                                         disabled={comment.reported}
                                                     >
                                                         <option value="">Select Feedback</option>
@@ -232,7 +242,8 @@ const MyPosts = () => {
                                                     <button
                                                         onClick={() => handleReportComment(comment._id)}
                                                         disabled={!selected || comment.reported}
-                                                        className={`btn btn-sm btn-warning ${(!selected || comment.reported) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                                        className={`px-3 py-1 rounded ${comment.reported ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#fb8b24] hover:bg-[#9a031e] text-white'
+                                                            }`}
                                                     >
                                                         {comment.reported ? 'Reported' : 'Report'}
                                                     </button>
@@ -247,8 +258,8 @@ const MyPosts = () => {
                         {readMoreComment && (
                             <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-60">
                                 <div className="bg-white p-6 rounded shadow-lg max-w-md w-full relative">
-                                    <button onClick={() => setReadMoreComment(null)} className="absolute top-2 right-2 text-2xl text-gray-600 hover:text-black">&times;</button>
-                                    <p>{readMoreComment}</p>
+                                    <button onClick={() => setReadMoreComment(null)} className="absolute top-2 right-2 text-2xl text-[#9a031e] hover:text-[#5f0f40]">&times;</button>
+                                    <p className="text-[#0f4c5c]">{readMoreComment}</p>
                                 </div>
                             </div>
                         )}
